@@ -1,0 +1,7 @@
+<application>
+  <component name="GithubAccounts">
+    <account id="92ec1ce0-a0ba-4d81-b8a5-12215a6d17ed" name="crypto-code">
+      <server host="github.com" />
+    </account>
+  </component>
+</application>
