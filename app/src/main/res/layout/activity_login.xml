@@ -4,6 +4,61 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#000000"
     tools:context=".LoginActivity">
 
+    <FrameLayout
+        android:id="@+id/camera_preview"
+        android:layout_width="280dp"
+        android:layout_height="300dp"
+        android:layout_weight="1"
+        android:clipChildren="true"
+        android:clipToPadding="true"
+        android:visibility="visible"
+        app:layout_constraintBottom_toTopOf="@+id/button3"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.455">
+
+    </FrameLayout>
+
+    <Button
+        android:id="@+id/button3"
+        style="@style/Widget.AppCompat.Button.Borderless"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="76dp"
+        android:text="LOGIN"
+        android:textColor="#17DF08"
+        android:textSize="30sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="-"
+        android:textColor="#FFFFFF"
+        android:textSize="24sp"
+        app:layout_constraintBottom_toTopOf="@+id/camera_preview"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="192dp"
+        android:layout_height="209dp"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="@+id/camera_preview"
+        app:layout_constraintEnd_toEndOf="@+id/camera_preview"
+        app:layout_constraintStart_toStartOf="@+id/camera_preview"
+        app:layout_constraintTop_toTopOf="@+id/camera_preview" />
 </androidx.constraintlayout.widget.ConstraintLayout>
