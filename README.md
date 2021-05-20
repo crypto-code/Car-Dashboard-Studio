@@ -1,4 +1,4 @@
-# 🚗 Car-Dashboard-Studio
+# 🚗 Car-Dashboard-Android Studio
 
 This repo is a Android Studio Project with Kotlin as Front-End and Python as Back-End using Chaquopy 🐼
 
