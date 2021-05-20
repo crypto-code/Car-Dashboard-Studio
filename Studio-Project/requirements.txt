@@ -1,0 +1,10 @@
+pillow
+opencv-python
+numpy
+scipy
+matplotlib
+scikit-image
+scikit-learn
+ipython
+Face-recognition
+firebase_admin

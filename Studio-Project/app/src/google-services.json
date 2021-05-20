@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "167269891237",
+    "project_id": "car-dashboard-e3c1f",
+    "storage_bucket": "car-dashboard-e3c1f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:167269891237:android:558df3a26f4a8ad66ea14c",
+        "android_client_info": {
+          "package_name": "com.example.cardashboard"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "167269891237-ohp01vjn920u1kvdn41narpr8mrhjlcd.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAk5bpMdjFPF3Qnu-5B79_MJUSUsCkNQFc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "167269891237-ohp01vjn920u1kvdn41narpr8mrhjlcd.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
