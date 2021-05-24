@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project version="4">
-  <component name="ProjectModuleManager">
-    <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Car_Dashboard.iml" filepath="$PROJECT_DIR$/.idea/modules/Car_Dashboard.iml" group="Car_Dashboard" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/app.iml" group="Car Dashboard/app" />
-    </modules>
-  </component>
-</project>
