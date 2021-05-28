@@ -8,6 +8,8 @@ import firebase_admin
 import numpy as np
 
 import json
+import requests
+import time
 
 privateKey = {
   "type": "service_account",
@@ -133,4 +135,18 @@ def check_pin(id, pin):
  except:
    return ""
 
+geoLoc = None
+geoData = None
+lastTime = None
 
+def get_weather(lat, lon):
+  global geoLoc, geoData, lastTime
+  currTime = time.time()
+  if lastTime == None or currTime - lastTime > 3600 or abs(geoLoc[0] - lat) > 0.5 or abs(geoLoc[1] - lon) > 0.5:
+    apiKey = "5335f4dd5e54d57760b199b8330173e1"
+    url = "https://api.openweathermap.org/data/2.5/onecall?lat=%f&lon=%f&appid=%s&units=metric" % (lat, lon, apiKey)
+    response = requests.get(url)
+    geoData = json.loads(response.text)
+    geoLoc = [lat, lon]
+    lastTime = currTime
+  return geoData["timezone"] + " / " +  str(geoData["current"]["temp"]) + " / " + geoData["current"]["weather"][0]["main"] + " / " + str(geoData["current"]["humidity"]) + " / " + str(geoData["current"]["wind_speed"])

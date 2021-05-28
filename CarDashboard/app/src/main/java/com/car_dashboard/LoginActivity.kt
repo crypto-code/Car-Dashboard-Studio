@@ -121,6 +121,7 @@ class LoginActivity : AppCompatActivity() {
         }
 
         mCamera = getCameraInstance()
+        mCamera!!.setDisplayOrientation(0)
         mPreview = mCamera?.let {
             CameraPreview(this, it)
         }

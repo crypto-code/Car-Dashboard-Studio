@@ -8,3 +8,6 @@ scikit-learn
 ipython
 Face-recognition
 firebase_admin
+ytmusicapi
+youtube_dl
+pafy

@@ -3,5 +3,6 @@
     <array name="preloaded_fonts" translatable="false">
         <item>@font/amiko</item>
         <item>@font/amiko_bold</item>
+        <item>@font/assistant_semibold</item>
     </array>
 </resources>

@@ -1,5 +1,8 @@
 package com.car_dashboard
 
+import android.media.AudioManager
+import android.media.MediaPlayer
+
 object Values {
 
     var myID: String? = ""
@@ -7,4 +10,5 @@ object Values {
     var myPIN: String? = ""
     var isFirst: Boolean = true
 
+    var Music: MusicPlayer = MusicPlayer()
 }
