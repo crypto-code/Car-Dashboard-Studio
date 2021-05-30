@@ -19,7 +19,7 @@ import java.io.FileNotFoundException
 import java.io.IOException
 import java.util.*
 
-class FaceAddActivity : AppCompatActivity() {
+class AddUserActivity : AppCompatActivity() {
 
     private var mCamera: Camera? = null
     private var mPreview: CameraPreview? = null
@@ -28,15 +28,16 @@ class FaceAddActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_face_add)
+        setContentView(R.layout.activity_add_user)
 
         startCamera()
 
-        val progressBar4 : ProgressBar = this.findViewById(R.id.progressBar4)
-        val camera_preview3 :FrameLayout = this.findViewById(R.id.camera_preview3)
-        val button24 : Button = this.findViewById(R.id.button24)
-        val personName : TextView = this.findViewById(R.id.personName2)
-        val pin : TextView = this.findViewById(R.id.pin2)
+        val progressBar4 : ProgressBar = this.findViewById(R.id.progressBar4n)
+        val camera_preview4 :FrameLayout = this.findViewById(R.id.camera_preview4)
+        val button24 : Button = this.findViewById(R.id.button24nb)
+        val button24n : Button = this.findViewById(R.id.button24n)
+        val personName : TextView = this.findViewById(R.id.personName2n)
+        val pin : TextView = this.findViewById(R.id.pin2n)
 
 
         val handler = Handler()
@@ -45,54 +46,36 @@ class FaceAddActivity : AppCompatActivity() {
                 try {
                     if (checkValid()) {
                         val python = Python.getInstance()
-                        val pythonFile = python.getModule("main")
-                        val pythonFile2 = python.getModule("user")
-                        val checkPinValid = pythonFile.callAttr("check_valid_pin", Values.myID, Values.myName, Values.myPIN)
-                        if (checkPinValid.toBoolean()) {
-                            val storeFace = pythonFile.callAttr(
-                                "add_face",
-                                Values.myID,
-                                Values.myName,
-                                Values.myPIN,
-                                data,
-                                pythonFile2.callAttr("get_admin_status", Values.myID, Values.myName)
-                            )
-                            if (storeFace.toBoolean()) {
-                                handler.post {
-                                    val intent =
-                                        Intent(this@FaceAddActivity, LoginActivity::class.java)
-                                    intent.flags = Intent.FLAG_ACTIVITY_NO_HISTORY;
-                                    releaseCamera()
-                                    startActivity(intent)
-                                }
-                            } else {
-                                handler.post {
-                                    releaseCamera()
-                                    startCamera()
-                                    progressBar4.visibility = View.INVISIBLE
-                                    camera_preview3.visibility = View.VISIBLE
-                                    button24.visibility = View.VISIBLE
-                                    personName.isEnabled = true
-                                    pin.isEnabled = true
-                                    Toast.makeText(
-                                        this,
-                                        "Make sure exactly one face is visible",
-                                        Toast.LENGTH_LONG
-                                    ).show()
-                                }
+                        val pythonFile = python.getModule("user")
+                        val storeFace = pythonFile.callAttr(
+                            "add_user_with_face",
+                            Values.myID,
+                            Values.newName,
+                            Values.newPIN,
+                            data,
+                            "False"
+                        )
+                        if (storeFace.toBoolean()) {
+                            handler.post {
+                                val intent =
+                                    Intent(this@AddUserActivity, UsersActivity::class.java)
+                                intent.flags = Intent.FLAG_ACTIVITY_NO_HISTORY;
+                                releaseCamera()
+                                startActivity(intent)
                             }
                         } else {
                             handler.post {
                                 releaseCamera()
                                 startCamera()
                                 progressBar4.visibility = View.INVISIBLE
-                                camera_preview3.visibility = View.VISIBLE
+                                camera_preview4.visibility = View.VISIBLE
                                 button24.visibility = View.VISIBLE
+                                button24n.visibility = View.VISIBLE
                                 personName.isEnabled = true
                                 pin.isEnabled = true
                                 Toast.makeText(
                                     this,
-                                    "Make sure the provided details are correct",
+                                    "Make sure exactly one face is visible",
                                     Toast.LENGTH_LONG
                                 ).show()
                             }
@@ -106,22 +89,23 @@ class FaceAddActivity : AppCompatActivity() {
             }).start()
         }
 
-        val captureButton: Button = findViewById(R.id.button24)
+        val captureButton: Button = findViewById(R.id.button24nb)
         captureButton.setOnClickListener {
             Thread(Runnable {
                 mCamera?.takePicture(null, null, mPicture)
             }).start()
             progressBar4.visibility = View.VISIBLE
-            camera_preview3.visibility = View.INVISIBLE
+            camera_preview4.visibility = View.INVISIBLE
             button24.visibility = View.INVISIBLE
+            button24n.visibility = View.INVISIBLE
             personName.isEnabled = false
             pin.isEnabled = false
         }
 
-        this.findViewById<Button>(R.id.button2).setOnClickListener {
+        this.findViewById<Button>(R.id.button2b).setOnClickListener {
             handler.post {
                 val intent =
-                    Intent(this@FaceAddActivity, LoginActivity::class.java)
+                    Intent(this@AddUserActivity, UsersActivity::class.java)
                 intent.flags = Intent.FLAG_ACTIVITY_NO_HISTORY;
                 releaseCamera()
                 startActivity(intent)
@@ -134,16 +118,53 @@ class FaceAddActivity : AppCompatActivity() {
             }
         })
         t2s.setSpeechRate(0.8F)
-    }
 
-    override fun onEnterAnimationComplete() {
-        super.onEnterAnimationComplete()
-        t2s.speak("Please show your face to the camera and click to add your face id", TextToSpeech.QUEUE_FLUSH, null)
+        button24n.setOnClickListener {
+            if (checkValid()) {
+                val python = Python.getInstance()
+                val pythonFile = python.getModule("user")
+                val checkUnique = pythonFile.callAttr(
+                    "check_if_present",
+                    Values.myID,
+                    Values.newName,
+                )
+                if (!checkUnique.toBoolean()) {
+                    val storeUser = pythonFile.callAttr(
+                        "add_user_without_face",
+                        Values.myID,
+                        Values.newName,
+                        Values.newPIN,
+                        "False"
+                    )
+                    if (storeUser.toBoolean()) {
+                        handler.post {
+                            val intent =
+                                Intent(this@AddUserActivity, UsersActivity::class.java)
+                            intent.flags = Intent.FLAG_ACTIVITY_NO_HISTORY;
+                            releaseCamera()
+                            startActivity(intent)
+                        }
+                    } else {
+                        Toast.makeText(
+                            this,
+                            "An Error Occured, Try Again",
+                            Toast.LENGTH_LONG
+                        ).show()
+                    }
+                } else {
+                    Toast.makeText(
+                        this,
+                        "This User already exists",
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+            }
+        }
     }
 
     fun checkValid() :Boolean {
-        val personName : TextView = this.findViewById(R.id.personName2)
-        val pin : TextView = this.findViewById(R.id.pin2)
+        val personName : TextView = this.findViewById(R.id.personName2n)
+        val pin : TextView = this.findViewById(R.id.pin2n)
         return if (personName.text.toString().isBlank() || pin.text.toString().isBlank()) {
             Toast.makeText(this,"Name and PIN are Required", Toast.LENGTH_SHORT).show()
             false
@@ -154,8 +175,8 @@ class FaceAddActivity : AppCompatActivity() {
             Toast.makeText(this,"Pin must be minimum 4 numbers long", Toast.LENGTH_LONG).show()
             false
         } else {
-            Values.myName = personName.text.toString()
-            Values.myPIN = pin.text.toString()
+            Values.newName = personName.text.toString()
+            Values.newPIN = pin.text.toString()
             true
         }
     }
@@ -176,7 +197,7 @@ class FaceAddActivity : AppCompatActivity() {
         }
 
         mPreview?.also {
-            val preview: FrameLayout = findViewById(R.id.camera_preview3)
+            val preview: FrameLayout = findViewById(R.id.camera_preview4)
             preview.addView(it)
         }
     }
@@ -222,9 +243,5 @@ class FaceAddActivity : AppCompatActivity() {
     private fun releaseCamera() {
         mCamera?.release()
         mCamera = null
-    }
-
-    override fun onBackPressed() {
-
     }
 }

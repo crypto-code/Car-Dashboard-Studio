@@ -11,4 +11,7 @@ object Values {
     var isFirst: Boolean = true
 
     var Music: MusicPlayer = MusicPlayer()
+
+    var newName: String? = ""
+    var newPIN: String? = ""
 }

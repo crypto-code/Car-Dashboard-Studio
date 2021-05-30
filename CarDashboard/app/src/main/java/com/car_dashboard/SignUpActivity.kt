@@ -4,11 +4,16 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
+import android.speech.tts.TextToSpeech
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
+import java.util.*
 
 class SignUpActivity : AppCompatActivity() {
+
+    lateinit var t2s :TextToSpeech
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_sign_up)
@@ -18,6 +23,14 @@ class SignUpActivity : AppCompatActivity() {
         this.findViewById<Button>(R.id.button5).setOnClickListener {
             checkValid()
         }
+
+        t2s = TextToSpeech(this, TextToSpeech.OnInitListener {
+            if (it != TextToSpeech.ERROR) {
+                t2s.language = Locale.UK;
+            }
+        })
+        t2s.setSpeechRate(0.8F)
+        t2s.speak("Welcome please enter your Name and a Pin of your choice", TextToSpeech.QUEUE_FLUSH, null)
     }
 
     fun checkValid() {
@@ -33,6 +46,8 @@ class SignUpActivity : AppCompatActivity() {
             Values.myName = personName.text.toString()
             Values.myPIN = pin.text.toString()
             val handler = Handler()
+            t2s.stop()
+            t2s.shutdown()
             handler.post{
                 val intent = Intent(this, RegisterActivity::class.java)
                 intent.flags = Intent.FLAG_ACTIVITY_NO_HISTORY;

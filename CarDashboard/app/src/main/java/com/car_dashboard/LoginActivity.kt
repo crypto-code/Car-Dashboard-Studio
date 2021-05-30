@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Environment
 import android.os.Handler
+import android.speech.tts.TextToSpeech
 import android.util.Log
 import android.view.View
 import android.widget.*
@@ -28,6 +29,8 @@ class LoginActivity : AppCompatActivity() {
     private var mCamera: Camera? = null
     private var mPreview: CameraPreview? = null
     private var cameraId = 0
+    lateinit var t2s :TextToSpeech
+    var checkPresent :Boolean = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,9 +44,9 @@ class LoginActivity : AppCompatActivity() {
 
         val python = Python.getInstance()
         val pythonFile = python.getModule("main")
-        val checkPresent = pythonFile.callAttr("check_if_encoding", Values.myID)
+        checkPresent = pythonFile.callAttr("check_if_encoding", Values.myID).toBoolean()
 
-        if (checkPresent.toBoolean()) {
+        if (checkPresent) {
             val handler = Handler()
             val mPicture = Camera.PictureCallback { data, _ ->
                 Thread(Runnable {
@@ -108,6 +111,32 @@ class LoginActivity : AppCompatActivity() {
                 releaseCamera()
                 startActivity(intent)
             }
+        }
+
+        t2s = TextToSpeech(this, TextToSpeech.OnInitListener {
+            if (it != TextToSpeech.ERROR) {
+                t2s.language = Locale.UK;
+            }
+        })
+        t2s.setSpeechRate(0.8F)
+    }
+
+    override fun onEnterAnimationComplete() {
+        super.onEnterAnimationComplete()
+        if (checkPresent) {
+            t2s.speak(
+                "Please show your face to the camera. And click to start the engine",
+                TextToSpeech.QUEUE_FLUSH,
+                null,
+                null
+            )
+        } else {
+            t2s.speak(
+                "Please add your face I D. Or use your backup pin",
+                TextToSpeech.QUEUE_FLUSH,
+                null,
+                null
+            )
         }
     }
 

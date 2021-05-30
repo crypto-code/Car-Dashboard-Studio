@@ -7,7 +7,7 @@
     android:background="@drawable/back2"
     tools:context=".MainActivity">
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/linearLayout3"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -21,10 +21,14 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <LinearLayout
+            android:id="@+id/linearLayout7"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
             <TextView
                 android:id="@+id/timeView"
@@ -49,10 +53,18 @@
                 android:textSize="30sp" />
         </LinearLayout>
 
-        <Space
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/logoutBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1" />
+            android:background="@drawable/button"
+            android:text="Log Out"
+            android:textColor="#FFFFFF"
+            android:textSize="24sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/nameView"
@@ -60,8 +72,12 @@
             android:layout_height="wrap_content"
             android:text="Welcome, Atin"
             android:textColor="#FFFFFF"
-            android:textSize="34sp" />
-    </LinearLayout>
+            android:textSize="34sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <LinearLayout
         android:id="@+id/linearLayout6"
@@ -71,6 +87,7 @@
         android:layout_marginTop="20dp"
         android:layout_marginEnd="20dp"
         android:layout_marginBottom="40dp"
+        android:gravity="center"
         android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -96,13 +113,10 @@
         <LinearLayout
             android:layout_width="450dp"
             android:layout_height="match_parent"
+            android:gravity="center"
             android:orientation="vertical"
             app:layout_column="1"
             app:layout_row="0">
-
-            <Space
-                android:layout_width="match_parent"
-                android:layout_height="80dp" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -214,6 +228,19 @@
                 android:text="00.00  Km/hr"
                 android:textColor="#FFFFFF"
                 android:textSize="60sp" />
+
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="50dp" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/usersBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/button"
+                android:text="Manage Users"
+                android:textColor="#FFFFFF"
+                android:textSize="24sp" />
         </LinearLayout>
 
         <Space
@@ -259,8 +286,7 @@
                         android:inputType="textPersonName"
                         android:paddingLeft="12dp"
                         android:textColor="#FFFFFF"
-                        android:textSize="20sp"
-                        tools:text="Hello World" />
+                        android:textSize="20sp" />
 
                     <ImageView
                         android:id="@+id/searchBtn"
@@ -440,16 +466,5 @@
         <!--        </LinearLayout>-->
 
     </LinearLayout>
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="1363dp"
-        android:layout_height="38dp"
-        android:layout_marginTop="2dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout6">
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

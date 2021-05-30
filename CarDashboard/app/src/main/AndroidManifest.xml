@@ -26,11 +26,11 @@
         android:screenOrientation="landscape"
         android:supportsRtl="true"
         android:theme="@style/Theme.CarDashboard">
+        <activity android:name=".AddUserActivity"></activity>
+        <activity android:name=".UsersActivity" />
         <activity android:name=".FaceAddActivity" />
         <activity android:name=".PinActivity" />
-        <activity android:name=".MainActivity">
-
-        </activity>
+        <activity android:name=".MainActivity" />
         <activity android:name=".LoginActivity" />
         <activity android:name=".RegisterActivity" />
         <activity android:name=".SignUpActivity" />
@@ -45,7 +45,9 @@
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
-        <meta-data android:name="com.google.android.geo.API_KEY" android:value="AIzaSyB_MFFLNL-m2JOwi6qhhQsYbt72TzjnMSc"/>
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyB_MFFLNL-m2JOwi6qhhQsYbt72TzjnMSc" />
     </application>
 
 </manifest>

@@ -65,25 +65,25 @@ def get_encoding_with_image(img):
   return get_encoding_with_file(os.environ["HOME"] + "/temp.jpg")
 
 
-def store_face(id, name, pin, img):
+def store_face(id, name, pin, img, is_admin):
   try:
     enc = get_encoding_with_image(img)
-    ref.child(id).set({name: {"PIN": pin, "Encoding": enc.tolist()}})
+    ref.child(id).set({name: {"PIN": pin, "Encoding": enc.tolist(), "is_admin": str(is_admin)}})
     return True
   except:
     return False
 
-def add_face(id, name, pin, img):
+def add_face(id, name, pin, img, is_admin):
   try:
     enc = get_encoding_with_image(img)
-    ref.child(id).update({name: {"PIN": pin, "Encoding": enc.tolist()}})
+    ref.child(id).update({name: {"PIN": pin, "Encoding": enc.tolist(), "is_admin":str(is_admin)}})
     return True
   except:
     return False
 
-def store_without_face(id, name, pin):
+def store_without_face(id, name, pin, is_admin):
     try:
-      ref.child(id).set({name: {"PIN": pin, "Encoding": ""}})
+      ref.child(id).set({name: {"PIN": pin, "Encoding": "", "is_admin": str(is_admin)}})
       return True
     except:
       return False

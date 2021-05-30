@@ -8,6 +8,7 @@ import android.hardware.Camera
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
+import android.speech.tts.TextToSpeech
 import android.util.Log
 import android.view.View
 import android.widget.*
@@ -16,12 +17,14 @@ import androidx.core.content.ContextCompat
 import com.chaquo.python.Python
 import java.io.FileNotFoundException
 import java.io.IOException
+import java.util.*
 
 class RegisterActivity : AppCompatActivity() {
 
     private var mCamera: Camera? = null
     private var mPreview: CameraPreview? = null
     private var cameraId = 0
+    lateinit var t2s : TextToSpeech
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -79,6 +82,18 @@ class RegisterActivity : AppCompatActivity() {
         this.findViewById<Button>(R.id.button7).setOnClickListener {
             skipFace()
         }
+
+        t2s = TextToSpeech(this, TextToSpeech.OnInitListener {
+            if (it != TextToSpeech.ERROR) {
+                t2s.language = Locale.UK;
+            }
+        })
+        t2s.setSpeechRate(0.8F)
+    }
+
+    override fun onEnterAnimationComplete() {
+        super.onEnterAnimationComplete()
+        t2s.speak("Please show your face to the camera. And click register to add your face id", TextToSpeech.QUEUE_FLUSH, null, null)
     }
 
     private fun skipFace() {

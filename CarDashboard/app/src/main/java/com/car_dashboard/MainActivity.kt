@@ -2,9 +2,14 @@ package com.car_dashboard
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.app.AlertDialog
+import android.content.DialogInterface
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Bundle
+import android.os.Handler
+import android.speech.tts.TextToSpeech
 import android.view.MotionEvent
 import android.view.View
 import android.widget.*
@@ -23,7 +28,6 @@ import com.google.android.gms.maps.model.LatLng
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
-import kotlin.collections.HashSet
 
 
 class MainActivity : AppCompatActivity(), OnMapReadyCallback {
@@ -40,15 +44,41 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     var prevLoc :Location? = null
     var stillCount :Int = 0
     var firstMove = true
+    lateinit var t2s :TextToSpeech
+    lateinit var tempView :TextView
+    lateinit var weatherView :TextView
+    lateinit var humidView :TextView
+    lateinit var windView :TextView
+
+    lateinit var weatherUpdate :String
+
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        // Temporary
-//        Values.myName = "ryk"
-//        Values.myID = "8d15b759c609fc72"
+        tempView = this.findViewById(R.id.tempView)
+        weatherView = this.findViewById(R.id.weatherView)
+        humidView = this.findViewById(R.id.humidView)
+        windView = this.findViewById(R.id.windView)
+
+        val python = Python.getInstance()
+        val pythonFile = python.getModule("user")
+        val adminStatus = pythonFile.callAttr("get_admin_status", Values.myID, Values.myName)
+        if (adminStatus.toString().equals("False")) {
+            this.findViewById<Button>(R.id.usersBtn).visibility = View.INVISIBLE
+        } else {
+            this.findViewById<Button>(R.id.usersBtn).setOnClickListener {
+                val handler: Handler = Handler()
+                mapThread.interrupt()
+                handler.post {
+                    val intent = Intent(this@MainActivity, UsersActivity::class.java)
+                    intent.flags = Intent.FLAG_ACTIVITY_NO_HISTORY;
+                    startActivity(intent)
+                }
+            }
+        }
 
         val dateFormatter = SimpleDateFormat("dd MMMM yyyy")
         val timeFormatter = SimpleDateFormat("hh:mm:ss a")
@@ -56,6 +86,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         val timeView :TextView = this.findViewById(R.id.timeView)
         val dateView :TextView = this.findViewById(R.id.dateView)
         nameView.text = "Welcome, ${Values.myName}"
+
 
         val thread: Thread = object : Thread() {
             override fun run() {
@@ -182,6 +213,49 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         this.findViewById<Button>(R.id.favBtn).setOnClickListener {
             getFavorites()
         }
+
+        t2s = TextToSpeech(this, TextToSpeech.OnInitListener {
+            if (it != TextToSpeech.ERROR) {
+                t2s.language = Locale.UK;
+            }
+        })
+        t2s.setSpeechRate(0.8F)
+
+        this.findViewById<Button>(R.id.logoutBtn).setOnClickListener {
+            val builder: AlertDialog.Builder = AlertDialog.Builder(this)
+            builder.setCancelable(true)
+            builder.setTitle("Exit Dashboard Dialog")
+            builder.setMessage("Are you sure you want to exit dashboard")
+            builder.setPositiveButton("Confirm"
+            ) { dialog, which ->
+                val handler = Handler()
+                handler.post {
+                    val intent = Intent(this@MainActivity, WelcomeActivity::class.java)
+                    intent.flags = Intent.FLAG_ACTIVITY_NO_HISTORY;
+                    mapThread.interrupt()
+                    startActivity(intent)
+                }
+            }
+            builder.setNegativeButton(android.R.string.cancel,
+                DialogInterface.OnClickListener { dialog, which -> })
+            val dialog: AlertDialog = builder.create()
+            dialog.show()
+        }
+    }
+
+    override fun onEnterAnimationComplete() {
+        super.onEnterAnimationComplete()
+        t2s.speak("Welcome to the D A A Dashboard", TextToSpeech.QUEUE_FLUSH, null)
+
+        object : Thread() {
+            override fun run() {
+                while(firstMove) {
+                    sleep(500)
+                }
+                sleep(1000)
+                t2s.speak(weatherUpdate, TextToSpeech.QUEUE_ADD, null)
+            }
+        }//.start()
     }
 
     fun getFavorites() {
@@ -228,11 +302,15 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         val python = Python.getInstance()
         val pythonFile = python.getModule("main")
         val weather = pythonFile.callAttr("get_weather", lat, lon).toString().split(" / ")
-        this.findViewById<TextView>(R.id.tempView).text = weather[1]
-        this.findViewById<TextView>(R.id.zoneView).text = weather[0].split("/")[1 ]
-        this.findViewById<TextView>(R.id.weatherView).text = weather[2]
-        this.findViewById<TextView>(R.id.humidView).text = "Humidity: " + weather[3]
-        this.findViewById<TextView>(R.id.windView).text = "Wind Speed: " + weather[4]
+        tempView.text = weather[1]
+        this.findViewById<TextView>(R.id.zoneView).text = weather[0].split("/")[1]
+        weatherView.text = weather[2]
+        humidView.text = "Humidity: " + weather[3]
+        windView.text = "Wind Speed: " + weather[4]
+        if (firstMove) {
+            weatherUpdate = "The current weather in your area is ${weather[2]} with a temperature of ${weather[1]} degree celsius, " +
+                    "humidity of ${weather[3]} percentage and wind speed of ${weather[4]} kilometer per hour."
+        }
     }
 
     private fun GoogleMapInit(savedInstanceState: Bundle?) {
@@ -338,6 +416,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                                         )
                                     )
                                     .tilt(60f).zoom(20f).bearing(gMap.myLocation.bearing).build()
+                                getWeather(gMap.myLocation.latitude, gMap.myLocation.longitude)
                                 if (firstMove) {
                                     gMap.moveCamera(
                                         CameraUpdateFactory.newCameraPosition(
@@ -352,7 +431,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                                         ), 200, null
                                     );
                                 }
-                                getWeather(gMap.myLocation.latitude, gMap.myLocation.longitude)
                             }
                             if (prevLoc != null && gMap.myLocation != null) {
                                 var value =  (gMap.myLocation.speed * 18/5)
@@ -380,5 +458,9 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
             }
         }
         mapThread.start()
+    }
+
+    override fun onBackPressed() {
+
     }
 }
