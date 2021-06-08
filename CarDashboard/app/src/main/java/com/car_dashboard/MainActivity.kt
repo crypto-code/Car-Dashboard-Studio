@@ -40,7 +40,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     var focusMyLocation = true
     var pressNext = false
     var pressPrev = false
-//    var playlist: MutableSet<String> = HashSet()
+    var playlist: MutableSet<String> = HashSet()
     var prevLoc :Location? = null
     var stillCount :Int = 0
     var firstMove = true
@@ -66,9 +66,10 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         val python = Python.getInstance()
         val pythonFile = python.getModule("user")
         val adminStatus = pythonFile.callAttr("get_admin_status", Values.myID, Values.myName)
-        if (adminStatus.toString().equals("False")) {
+        if (adminStatus.toString() == "False") {
             this.findViewById<Button>(R.id.usersBtn).visibility = View.INVISIBLE
         } else {
+            this.findViewById<Button>(R.id.usersBtn).visibility = View.VISIBLE
             this.findViewById<Button>(R.id.usersBtn).setOnClickListener {
                 val handler: Handler = Handler()
                 mapThread.interrupt()

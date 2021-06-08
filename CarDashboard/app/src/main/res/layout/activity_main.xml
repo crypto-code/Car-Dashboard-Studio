@@ -37,7 +37,7 @@
                 android:fontFamily="@font/amiko"
                 android:text="00:00 AM"
                 android:textColor="#FFFFFF"
-                android:textSize="30sp" />
+                android:textSize="25sp" />
 
             <Space
                 android:layout_width="match_parent"
@@ -50,13 +50,13 @@
                 android:layout_height="wrap_content"
                 android:text="19 May 2021"
                 android:textColor="#FFFFFF"
-                android:textSize="30sp" />
+                android:textSize="25sp" />
         </LinearLayout>
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/logoutBtn"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="60dp"
             android:background="@drawable/button"
             android:text="Log Out"
             android:textColor="#FFFFFF"
@@ -72,14 +72,14 @@
             android:layout_height="wrap_content"
             android:text="Welcome, Atin"
             android:textColor="#FFFFFF"
-            android:textSize="34sp"
+            android:textSize="28sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/linearLayout6"
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -98,38 +98,47 @@
 
         <com.google.android.gms.maps.MapView
             android:id="@+id/map"
-            android:layout_width="410dp"
+            android:layout_width="420dp"
             android:layout_height="match_parent"
             android:apiKey="AIzaSyB_MFFLNL-m2JOwi6qhhQsYbt72TzjnMSc"
             android:padding="4dp"
             app:layout_column="0"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/constraintLayout"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
             app:layout_row="0" />
 
-        <Space
-            android:layout_width="25dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="0" />
-
-        <LinearLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/constraintLayout"
             android:layout_width="450dp"
             android:layout_height="match_parent"
             android:gravity="center"
             android:orientation="vertical"
             app:layout_column="1"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
             app:layout_row="0">
 
             <LinearLayout
+                android:id="@+id/linearLayout8"
                 android:layout_width="match_parent"
                 android:layout_height="150dp"
+                android:layout_marginTop="10dp"
                 android:background="@drawable/rounded_rectangle"
                 android:gravity="center"
                 android:orientation="horizontal"
-                android:padding="7dp">
+                android:padding="7dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
 
                 <ImageView
                     android:id="@+id/imageView7"
-                    android:layout_width="70dp"
-                    android:layout_height="70dp"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
                     android:layout_weight="0"
                     app:srcCompat="@drawable/sunny" />
 
@@ -144,7 +153,7 @@
                     android:layout_weight="0"
                     android:text="__.__"
                     android:textColor="#FFFFFF"
-                    android:textSize="50sp" />
+                    android:textSize="40sp" />
 
                 <TextView
                     android:id="@+id/textView21"
@@ -153,7 +162,7 @@
                     android:layout_weight="0"
                     android:text="°C"
                     android:textColor="#FFFFFF"
-                    android:textSize="50sp" />
+                    android:textSize="40sp" />
 
                 <Space
                     android:layout_width="10dp"
@@ -205,19 +214,15 @@
 
             </LinearLayout>
 
-            <Space
-                android:layout_width="match_parent"
-                android:layout_height="80dp" />
-
             <ImageView
                 android:id="@+id/imageView4"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="200dp"
+                app:layout_constraintBottom_toTopOf="@+id/usersBtn"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/linearLayout8"
                 app:srcCompat="@drawable/logo2" />
-
-            <Space
-                android:layout_width="match_parent"
-                android:layout_height="80dp" />
 
             <TextView
                 android:id="@+id/speedView"
@@ -227,21 +232,25 @@
                 android:gravity="center"
                 android:text="00.00  Km/hr"
                 android:textColor="#FFFFFF"
-                android:textSize="60sp" />
-
-            <Space
-                android:layout_width="match_parent"
-                android:layout_height="50dp" />
+                android:textSize="45sp"
+                app:layout_constraintBottom_toTopOf="@+id/usersBtn"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/imageView4" />
 
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/usersBtn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
                 android:background="@drawable/button"
                 android:text="Manage Users"
                 android:textColor="#FFFFFF"
-                android:textSize="24sp" />
-        </LinearLayout>
+                android:textSize="24sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <Space
             android:layout_width="25dp"
@@ -249,15 +258,20 @@
             android:layout_weight="0" />
 
         <LinearLayout
-            android:layout_width="400dp"
+            android:id="@+id/linearLayout9"
+            android:layout_width="380dp"
             android:layout_height="match_parent"
             android:background="@drawable/rounded_rectangle3"
             android:gravity="center"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/constraintLayout"
+            app:layout_constraintTop_toTopOf="parent">
 
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="410dp"
+                android:layout_width="420dp"
                 android:layout_height="match_parent">
 
                 <LinearLayout
@@ -465,6 +479,6 @@
 
         <!--        </LinearLayout>-->
 
-    </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

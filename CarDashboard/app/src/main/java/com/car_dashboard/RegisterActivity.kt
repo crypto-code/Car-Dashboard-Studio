@@ -43,7 +43,7 @@ class RegisterActivity : AppCompatActivity() {
                 try {
                     val python = Python.getInstance()
                     val pythonFile = python.getModule("main")
-                    val storeFace = pythonFile.callAttr("store_face", Values.myID, Values.myName, Values.myPIN, data)
+                    val storeFace = pythonFile.callAttr("store_face", Values.myID, Values.myName, Values.myPIN, data, "True")
                     if (storeFace.toBoolean()) {
                         handler.post {
                             val intent = Intent(this@RegisterActivity, LoginActivity::class.java)
@@ -99,7 +99,7 @@ class RegisterActivity : AppCompatActivity() {
     private fun skipFace() {
         val python = Python.getInstance()
         val pythonFile = python.getModule("main")
-        val storeFace = pythonFile.callAttr("store_without_face", Values.myID, Values.myName, Values.myPIN)
+        val storeFace = pythonFile.callAttr("store_without_face", Values.myID, Values.myName, Values.myPIN, "True")
         val handler = Handler()
         if (storeFace.toBoolean()) {
             handler.post {

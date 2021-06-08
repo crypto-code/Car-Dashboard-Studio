@@ -48,7 +48,9 @@ def get_songs(name):
   for r in results:
     try:
       tmp = [int(x) for x in r["duration"].split(":")]
-      songs.append(str({"title": r["title"], "id": r["videoId"], "url": get_url(r["videoId"]), "artists": ", ".join(x["name"] for x in r["artists"]), "duration": "{:02d}:{:02d}".format(tmp[0], tmp[1]), "thumbnail": r["thumbnails"][0]["url"]}))
+      songs.append(str({"title": r["title"], "id": r["videoId"], "url": get_url(r["videoId"]),
+      "artists": ", ".join(x["name"] for x in r["artists"]),
+      "duration": "{:02d}:{:02d}".format(tmp[0], tmp[1]), "thumbnail": r["thumbnails"][0]["url"]}))
     except:
       continue
   return " / ".join(s for s in songs)
@@ -57,6 +59,12 @@ def get_url(songID):
   video = pafy.new("https://youtube.com/watch?v="+songID)
   return video.getbest().url
 
+def get_song(songID):
+  details = ytmusic.get_song(songID)['videoDetails']
+  return {"title": details["title"], "id": songID, "url":get_url(songID),
+  "artists": details["author"], "duration": sec_to_time(details["lengthSeconds"]),
+  "thumbnail": details["thumbnail"]["thumbnails"][0]["url"]}
+
 def sec_to_time(sec):
   ty_res = time.gmtime(int(sec))
   if int(sec) >= 3600:
@@ -64,6 +72,4 @@ def sec_to_time(sec):
   else:
     return time.strftime("%M:%S",ty_res)
 
-def get_song(songID):
-  details = ytmusic.get_song(songID)['videoDetails']
-  return {"title": details["title"], "id": songID, "url":get_url(songID), "artists": details["author"], "duration": sec_to_time(details["lengthSeconds"]), "thumbnail": details["thumbnail"]["thumbnails"][0]["url"]}
+
