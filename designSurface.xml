@@ -8,6 +8,7 @@
         <entry key="app/src/main/res/drawable/rounded_rectangle2.xml" value="0.4111328125" />
         <entry key="app/src/main/res/drawable/rounded_rectangle3.xml" value="0.4111328125" />
         <entry key="app/src/main/res/layout/activity_add_user.xml" value="0.375" />
+        <entry key="app/src/main/res/layout/activity_credit.xml" value="0.1" />
         <entry key="app/src/main/res/layout/activity_face_add.xml" value="0.2840632603406326" />
         <entry key="app/src/main/res/layout/activity_login.xml" value="0.5" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.335" />
