@@ -25,11 +25,16 @@
         android:roundIcon="@drawable/logo2"
         android:screenOrientation="landscape"
         android:supportsRtl="true"
-        android:theme="@style/Theme.CarDashboard">
-        <activity android:name=".CreditActivity"></activity>
+        android:theme="@style/Theme.CarDashboard"
+        android:requestLegacyExternalStorage="true">
+        <activity android:name=".ProfileActivity"
+            android:screenOrientation="landscape">
+        </activity>
+        <activity android:name=".CreditActivity"
+            android:screenOrientation="landscape"/>
         <activity
             android:name=".NavigationActivity"
-            android:screenOrientation="landscape"></activity>
+            android:screenOrientation="landscape" />
         <activity
             android:name=".AddUserActivity"
             android:screenOrientation="landscape" />

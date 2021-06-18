@@ -66,6 +66,16 @@ def get_encoding_with_image(img):
   image.save(os.environ["HOME"] + "/temp.jpg")
   return get_encoding_with_file(os.environ["HOME"] + "/temp.jpg")
 
+def upload_profile_pic(id, name, pic):
+  try:
+    image_data = io.BytesIO(pic).read()
+    bucket = storage.bucket()
+    blob = bucket.blob(id + "/" + name + ".png")
+    blob.delete()
+    blob.upload_from_string(image_data, content_type='image/png')
+    return True
+  except:
+    return False
 
 def store_face(id, name, pin, img, is_admin, profile):
   try:

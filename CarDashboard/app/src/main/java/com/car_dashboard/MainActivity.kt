@@ -11,7 +11,6 @@ import android.location.Location
 import android.os.Bundle
 import android.os.Handler
 import android.speech.tts.TextToSpeech
-import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.view.inputmethod.InputMethodManager
@@ -27,7 +26,6 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapView
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.model.*
-import com.squareup.picasso.Picasso
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -46,6 +44,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     var prevLoc :Location? = null
     var stillCount :Int = 0
     var firstMove = true
+    lateinit var profilePic :ImageView
     lateinit var t2s :TextToSpeech
     lateinit var tempView :TextView
     lateinit var weatherView :TextView
@@ -95,7 +94,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         val python = Python.getInstance()
         val pythonFile = python.getModule("user")
         val adminStatus = pythonFile.callAttr("get_admin_status", Values.myID, Values.myName)
-        Picasso.get().setLoggingEnabled(true)
         if (adminStatus.toString() == "False") {
             this.findViewById<Button>(R.id.usersBtn).visibility = View.INVISIBLE
         } else {
@@ -117,17 +115,14 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         val dateView :TextView = this.findViewById(R.id.dateView)
         nameView.text = "\uD83D\uDC4BWelcome, ${Values.myName}"
 
-        val profilePic : ImageView = this.findViewById(R.id.profileView)
-
-        object : Thread() {
-            override fun run() {
-                val python = Python.getInstance()
-                val pythonFile = python.getModule("main")
-                val imageURL = pythonFile.callAttr("get_profile_pic", Values.myID, Values.myName).toString()
-                DownloadImageTask(profilePic).execute(imageURL)
+        profilePic = this.findViewById(R.id.profileView)
+        profilePic.setOnClickListener{
+            val handler = Handler()
+            handler.post {
+                val intent = Intent(this@MainActivity, ProfileActivity::class.java)
+                startActivity(intent)
             }
-        }.start()
-
+        }
 
         val thread: Thread = object : Thread() {
             override fun run() {
@@ -405,15 +400,15 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     fun getWeather(lat: Double, lon: Double) {
-//        val python = Python.getInstance()
-//        val pythonFile = python.getModule("main")
-//        val weather = pythonFile.callAttr("get_weather", lat, lon).toString().split(" / ")
-//        tempView.text = weather[1]
-//        this.findViewById<TextView>(R.id.zoneView).text = weather[0].split("/")[1]
-//        weatherView.text = weather[2]
-//        humidView.text = "Humidity: " + weather[3]
-//        windView.text = "Wind Speed: " + weather[4]
-//        iconMap[weather[5]]?.let { this.findViewById<ImageView>(R.id.iconView).setImageResource(it) }
+        val python = Python.getInstance()
+        val pythonFile = python.getModule("main")
+        val weather = pythonFile.callAttr("get_weather", lat, lon).toString().split(" / ")
+        tempView.text = weather[1]
+        this.findViewById<TextView>(R.id.zoneView).text = weather[0].split("/")[1]
+        weatherView.text = weather[2]
+        humidView.text = "Humidity: " + weather[3]
+        windView.text = "Wind Speed: " + weather[4]
+        iconMap[weather[5]]?.let { this.findViewById<ImageView>(R.id.iconView).setImageResource(it) }
     }
 
     private fun GoogleMapInit(savedInstanceState: Bundle?) {
@@ -438,6 +433,14 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
     override fun onResume() {
         super.onResume()
+        object : Thread() {
+            override fun run() {
+                val python = Python.getInstance()
+                val pythonFile = python.getModule("main")
+                val imageURL = pythonFile.callAttr("get_profile_pic", Values.myID, Values.myName).toString()
+                DownloadImageTask(profilePic).execute(imageURL)
+            }
+        }.start()
         mMap.onResume()
     }
 

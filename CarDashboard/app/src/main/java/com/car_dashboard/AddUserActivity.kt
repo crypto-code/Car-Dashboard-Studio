@@ -57,11 +57,8 @@ class AddUserActivity : AppCompatActivity() {
                         )
                         if (storeFace.toBoolean()) {
                             handler.post {
-                                val intent =
-                                    Intent(this@AddUserActivity, UsersActivity::class.java)
-
                                 releaseCamera()
-                                startActivity(intent)
+                                this.onBackPressed()
                             }
                         } else {
                             handler.post {
