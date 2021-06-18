@@ -26,24 +26,36 @@
         android:screenOrientation="landscape"
         android:supportsRtl="true"
         android:theme="@style/Theme.CarDashboard">
+        <activity android:name=".CreditActivity"></activity>
+        <activity
+            android:name=".NavigationActivity"
+            android:screenOrientation="landscape"></activity>
         <activity
             android:name=".AddUserActivity"
             android:screenOrientation="landscape" />
-        <activity android:name=".UsersActivity"
-            android:screenOrientation="landscape"/>
-        <activity android:name=".FaceAddActivity"
-            android:screenOrientation="landscape"/>
-        <activity android:name=".PinActivity"
-            android:screenOrientation="landscape"/>
-        <activity android:name=".MainActivity"
-            android:screenOrientation="landscape"/>
-        <activity android:name=".LoginActivity"
-            android:screenOrientation="landscape"/>
-        <activity android:name=".RegisterActivity"
-            android:screenOrientation="landscape"/>
-        <activity android:name=".SignUpActivity"
-            android:screenOrientation="landscape"/>
-        <activity android:name=".WelcomeActivity"
+        <activity
+            android:name=".UsersActivity"
+            android:screenOrientation="landscape" />
+        <activity
+            android:name=".FaceAddActivity"
+            android:screenOrientation="landscape" />
+        <activity
+            android:name=".PinActivity"
+            android:screenOrientation="landscape" />
+        <activity
+            android:name=".MainActivity"
+            android:screenOrientation="landscape" />
+        <activity
+            android:name=".LoginActivity"
+            android:screenOrientation="landscape" />
+        <activity
+            android:name=".RegisterActivity"
+            android:screenOrientation="landscape" />
+        <activity
+            android:name=".SignUpActivity"
+            android:screenOrientation="landscape" />
+        <activity
+            android:name=".WelcomeActivity"
             android:screenOrientation="landscape">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

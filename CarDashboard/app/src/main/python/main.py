@@ -5,6 +5,7 @@ import PIL.Image as Image
 
 from firebase_admin import *
 import firebase_admin
+from firebase_admin import storage
 import numpy as np
 
 import json
@@ -30,7 +31,8 @@ with open(os.environ["HOME"] + "/key.json", "w") as outfile:
 
 cred = credentials.Certificate(os.environ["HOME"] + "/key.json")
 default_app = firebase_admin.initialize_app(cred, {
-  'databaseURL':'https://car-dashboard-e3c1f-default-rtdb.firebaseio.com/'
+  'databaseURL':'https://car-dashboard-e3c1f-default-rtdb.firebaseio.com/',
+  'storageBucket': "car-dashboard-e3c1f.appspot.com"
 })
 
 from firebase_admin import db
@@ -65,13 +67,22 @@ def get_encoding_with_image(img):
   return get_encoding_with_file(os.environ["HOME"] + "/temp.jpg")
 
 
-def store_face(id, name, pin, img, is_admin):
+def store_face(id, name, pin, img, is_admin, profile):
   try:
     enc = get_encoding_with_image(img)
+    bucket = storage.bucket()
+    image_data = io.BytesIO(profile).read()
+    blob = bucket.blob(id + "/" + name + ".png")
     ref.child(id).set({name: {"PIN": pin, "Encoding": enc.tolist(), "is_admin": str(is_admin)}})
+    blob.upload_from_string(image_data, content_type='image/png')
     return True
   except:
     return False
+
+def get_profile_pic(id, name):
+  bucket = storage.bucket()
+  blob = bucket.blob(id + "/" + name + ".png")
+  return blob.generate_signed_url(datetime.timedelta(seconds=300), method='GET')
 
 def add_face(id, name, pin, img, is_admin):
   try:
@@ -81,9 +92,13 @@ def add_face(id, name, pin, img, is_admin):
   except:
     return False
 
-def store_without_face(id, name, pin, is_admin):
+def store_without_face(id, name, pin, is_admin, profile):
     try:
+      bucket = storage.bucket()
+      image_data = io.BytesIO(profile).read()
+      blob = bucket.blob(id + "/" + name + ".png")
       ref.child(id).set({name: {"PIN": pin, "Encoding": "", "is_admin": str(is_admin)}})
+      blob.upload_from_string(image_data, content_type='image/png')
       return True
     except:
       return False
@@ -149,4 +164,4 @@ def get_weather(lat, lon):
     geoData = json.loads(response.text)
     geoLoc = [lat, lon]
     lastTime = currTime
-  return geoData["timezone"] + " / " +  str(geoData["current"]["temp"]) + " / " + geoData["current"]["weather"][0]["main"] + " / " + str(geoData["current"]["humidity"]) + " / " + str(geoData["current"]["wind_speed"])
+  return geoData["timezone"] + " / " +  str(geoData["current"]["temp"]) + " / " + geoData["current"]["weather"][0]["main"] + " / " + str(geoData["current"]["humidity"]) + " / " + str(geoData["current"]["wind_speed"]) + " / " + str(geoData["current"]["weather"][0]["icon"])
