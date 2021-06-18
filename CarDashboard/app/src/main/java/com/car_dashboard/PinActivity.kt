@@ -25,7 +25,6 @@ class PinActivity : AppCompatActivity() {
         findViewById<Button>(R.id.button21).setOnClickListener{
             handler.post {
                 val intent = Intent(this@PinActivity, LoginActivity::class.java)
-                intent.flags = Intent.FLAG_ACTIVITY_NO_HISTORY;
                 startActivity(intent)
             }
         }
@@ -44,6 +43,7 @@ class PinActivity : AppCompatActivity() {
 
     override fun onEnterAnimationComplete() {
         super.onEnterAnimationComplete()
+        findViewById<EditText>(R.id.inputPIN).setText("")
         t2s.speak("Please enter your pin and click to start the engine", TextToSpeech.QUEUE_FLUSH, null, null)
     }
 
@@ -59,9 +59,14 @@ class PinActivity : AppCompatActivity() {
             Values.myName = checkPin.toString()
             handler.post {
                 val intent = Intent(this@PinActivity, MainActivity::class.java)
-                intent.flags = Intent.FLAG_ACTIVITY_NO_HISTORY;
+                t2s.stop()
+                t2s.shutdown()
                 startActivity(intent)
             }
         }
+    }
+
+    override fun onBackPressed() {
+
     }
 }

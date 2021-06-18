@@ -50,7 +50,7 @@ class SignUpActivity : AppCompatActivity() {
             t2s.shutdown()
             handler.post{
                 val intent = Intent(this, RegisterActivity::class.java)
-                intent.flags = Intent.FLAG_ACTIVITY_NO_HISTORY;
+
                 startActivity(intent)
             }
         }

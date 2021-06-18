@@ -3,6 +3,7 @@ package com.car_dashboard
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.AlertDialog
+import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -10,8 +11,10 @@ import android.location.Location
 import android.os.Bundle
 import android.os.Handler
 import android.speech.tts.TextToSpeech
+import android.util.Log
 import android.view.MotionEvent
 import android.view.View
+import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import android.widget.SeekBar.OnSeekBarChangeListener
 import androidx.appcompat.app.AppCompatActivity
@@ -23,8 +26,8 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapView
 import com.google.android.gms.maps.OnMapReadyCallback
-import com.google.android.gms.maps.model.CameraPosition
-import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.*
+import com.squareup.picasso.Picasso
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -36,11 +39,10 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var gMap: GoogleMap
     val MAPVIEW_BUNDLE_KEY :String = "MapViewBundleKey"
     var pos: Location? = null
-    lateinit var mapThread :Thread
+    var mapThread : Thread? = null
     var focusMyLocation = true
     var pressNext = false
     var pressPrev = false
-    var playlist: MutableSet<String> = HashSet()
     var prevLoc :Location? = null
     var stillCount :Int = 0
     var firstMove = true
@@ -50,7 +52,11 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     lateinit var humidView :TextView
     lateinit var windView :TextView
 
-    lateinit var weatherUpdate :String
+    var iconMap = mapOf("01d" to R.drawable.icon_01d, "01n" to R.drawable.icon_01n, "02d" to R.drawable.icon_02d, "02n" to R.drawable.icon_02n,
+                        "03d" to R.drawable.icon_03d, "03n" to R.drawable.icon_03n, "04d" to R.drawable.icon_04d, "04n" to R.drawable.icon_04n,
+                        "09d" to R.drawable.icon_09d, "09n" to R.drawable.icon_09n, "10d" to R.drawable.icon_10d, "10n" to R.drawable.icon_10n,
+                        "11d" to R.drawable.icon_11d, "11n" to R.drawable.icon_11n, "13d" to R.drawable.icon_13d, "13n" to R.drawable.icon_13n,
+                        "50d" to R.drawable.icon_50d, "50n" to R.drawable.icon_50n)
 
 
     @SuppressLint("ClickableViewAccessibility")
@@ -58,35 +64,69 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+
         tempView = this.findViewById(R.id.tempView)
         weatherView = this.findViewById(R.id.weatherView)
         humidView = this.findViewById(R.id.humidView)
         windView = this.findViewById(R.id.windView)
 
+        this.findViewById<TextView>(R.id.searchText).isSelected = false
+
+        this.findViewById<Button>(R.id.dirBtn).setOnClickListener {
+            val handler = Handler()
+            handler.post {
+                val intent = Intent(this@MainActivity, NavigationActivity::class.java)
+                t2s.stop()
+                t2s.shutdown()
+                startActivity(intent)
+            }
+        }
+
+        this.findViewById<Button>(R.id.credit).setOnClickListener {
+            val handler = Handler()
+            handler.post {
+                val intent = Intent(this@MainActivity, CreditActivity::class.java)
+                t2s.stop()
+                t2s.shutdown()
+                startActivity(intent)
+            }
+        }
+
         val python = Python.getInstance()
         val pythonFile = python.getModule("user")
         val adminStatus = pythonFile.callAttr("get_admin_status", Values.myID, Values.myName)
+        Picasso.get().setLoggingEnabled(true)
         if (adminStatus.toString() == "False") {
             this.findViewById<Button>(R.id.usersBtn).visibility = View.INVISIBLE
         } else {
             this.findViewById<Button>(R.id.usersBtn).visibility = View.VISIBLE
             this.findViewById<Button>(R.id.usersBtn).setOnClickListener {
                 val handler: Handler = Handler()
-                mapThread.interrupt()
                 handler.post {
                     val intent = Intent(this@MainActivity, UsersActivity::class.java)
-                    intent.flags = Intent.FLAG_ACTIVITY_NO_HISTORY;
+                    t2s.stop()
+                    t2s.shutdown()
                     startActivity(intent)
                 }
             }
         }
-
         val dateFormatter = SimpleDateFormat("dd MMMM yyyy")
         val timeFormatter = SimpleDateFormat("hh:mm:ss a")
         val nameView :TextView = this.findViewById(R.id.nameView)
         val timeView :TextView = this.findViewById(R.id.timeView)
         val dateView :TextView = this.findViewById(R.id.dateView)
-        nameView.text = "Welcome, ${Values.myName}"
+        nameView.text = "\uD83D\uDC4BWelcome, ${Values.myName}"
+
+        val profilePic : ImageView = this.findViewById(R.id.profileView)
+
+        object : Thread() {
+            override fun run() {
+                val python = Python.getInstance()
+                val pythonFile = python.getModule("main")
+                val imageURL = pythonFile.callAttr("get_profile_pic", Values.myID, Values.myName).toString()
+                DownloadImageTask(profilePic).execute(imageURL)
+            }
+        }.start()
 
 
         val thread: Thread = object : Thread() {
@@ -109,9 +149,29 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         GoogleMapInit(savedInstanceState)
 
         this.findViewById<ImageView>(R.id.searchBtn).setOnClickListener{
+            val inputManager: InputMethodManager =
+                getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+
+            inputManager.hideSoftInputFromWindow(
+                if (null == currentFocus) null
+                else currentFocus!!.windowToken,
+                InputMethodManager.HIDE_NOT_ALWAYS
+            )
             getSearchResults()
         }
 
+        var recyclerView : RecyclerView = this.findViewById(R.id.musicView)
+
+        this.findViewById<ImageView>(R.id.albumMainView).setOnLongClickListener{
+            it.visibility = View.INVISIBLE
+            recyclerView.visibility = View.VISIBLE
+            true
+        }
+        val albumMain :ImageView = this.findViewById<ImageView>(R.id.albumMainView)
+        this.findViewById<TextView>(R.id.musicInfo).setOnClickListener {
+            albumMain.visibility = View.VISIBLE
+            recyclerView.visibility = View.INVISIBLE
+        }
 
         this.findViewById<ImageView>(R.id.playBtn).setOnClickListener{
             if (Values.Music.isPlaying) {
@@ -125,19 +185,16 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                 Values.Music.isPlaying = true
             }
         }
-        var seekBar :SeekBar = this.findViewById(R.id.seekBar)
+        val seekBar :SeekBar = this.findViewById(R.id.seekBar)
         seekBar.max = 100
         seekBar.setOnSeekBarChangeListener(object : OnSeekBarChangeListener {
             override fun onStopTrackingTouch(seekBar: SeekBar) {
-                // TODO Auto-generated method stub
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar) {
-                // TODO Auto-generated method stub
             }
 
             override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
-                // TODO Auto-generated method stub
                 if (fromUser and Values.Music.isPlaying) {
                     Values.Music.musicPlayer!!.seekTo(progress * Values.Music.musicPlayer!!.duration / 100)
                 } else if (fromUser and !Values.Music.isPlaying) {
@@ -151,6 +208,9 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         }
 
         val musicTime :TextView = this.findViewById(R.id.musicTrackStart)
+        val musicEnd :TextView = this.findViewById(R.id.musicTrackEnd)
+        val musicInfo :TextView = this.findViewById(R.id.musicInfo)
+        val playBtn :ImageView = this.findViewById(R.id.playBtn)
         var seekBarHandler :Thread = object : Thread() {
             override fun run() {
                 try {
@@ -165,6 +225,21 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                                     TimeUnit.MILLISECONDS.toSeconds(millis) -
                                             TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millis))
                                 );
+                                if (seekBar.progress == seekBar.max) {
+                                    seekBar.progress = 0
+                                    Values.Music.isPlaying = false
+                                    Values.Music.durationPlayed = 0
+                                    musicTime.text = "00:00"
+                                    musicEnd.text = "00:00"
+                                    albumMain.visibility = View.INVISIBLE
+                                    recyclerView.visibility = View.VISIBLE
+                                    musicInfo.text = ""
+                                    Values.Music.musicPlayer!!.stop()
+                                    Values.Music.musicPlayer!!.reset()
+                                    Values.Music.musicPlayer = null
+                                    seekBar.progress = 0
+                                    playBtn.setImageResource(R.drawable.play)
+                                }
                             }
                         }
                         sleep(200)
@@ -232,9 +307,9 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                 val handler = Handler()
                 handler.post {
                     val intent = Intent(this@MainActivity, WelcomeActivity::class.java)
-                    intent.flags = Intent.FLAG_ACTIVITY_NO_HISTORY;
-                    mapThread.interrupt()
+                    mapThread?.interrupt()
                     startActivity(intent)
+                    finish()
                 }
             }
             builder.setNegativeButton(android.R.string.cancel,
@@ -245,73 +320,100 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     override fun onEnterAnimationComplete() {
+
+        val inputManager: InputMethodManager =
+            getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+
+        inputManager.hideSoftInputFromWindow(
+            if (null == currentFocus) null
+            else currentFocus!!.windowToken,
+            InputMethodManager.HIDE_NOT_ALWAYS
+        )
+
         super.onEnterAnimationComplete()
         t2s.speak("Welcome to the D A A Dashboard", TextToSpeech.QUEUE_FLUSH, null)
-
-        object : Thread() {
-            override fun run() {
-                while(firstMove) {
-                    sleep(500)
-                }
-                sleep(1000)
-                t2s.speak(weatherUpdate, TextToSpeech.QUEUE_ADD, null)
-            }
-        }//.start()
     }
 
     fun getFavorites() {
-        val python = Python.getInstance()
-        val pythonFile = python.getModule("music")
-        val checkFav = pythonFile.callAttr("has_favorites", Values.myID, Values.myName).toBoolean()
+        val progress = this.findViewById<ProgressBar>(R.id.progressBar)
+        progress.visibility = View.VISIBLE
         val error = this.findViewById<TextView>(R.id.errorView)
-        if (!checkFav) {
-            error.text = "No Favorite Songs"
-            error.visibility = View.VISIBLE
-            return
-        }
-        error.visibility = View.INVISIBLE
-        val songs = pythonFile.callAttr("get_favorite_songs", Values.myID, Values.myName).toString().split(" / ")
-        var adapter = MusicAdapter(this, songs)
-        var recyclerView : RecyclerView = this.findViewById(R.id.musicView)
-        recyclerView.adapter = adapter
-        recyclerView.layoutManager = LinearLayoutManager(this)
+        val recyclerView : RecyclerView = this.findViewById(R.id.musicView)
+        recyclerView.visibility = View.INVISIBLE
+        this.findViewById<ImageView>(R.id.albumMainView).visibility = View.INVISIBLE
+        object : Thread() {
+            override fun run() {
+                val python = Python.getInstance()
+                val pythonFile = python.getModule("music")
+                val songsTogether =
+                    pythonFile.callAttr("get_favorite_songs", Values.myID, Values.myName)
+                        .toString()
+                runOnUiThread {
+                    if (songsTogether.isBlank()) {
+                        error.text = "No Favorite Songs"
+                        error.visibility = View.VISIBLE
+                        recyclerView.visibility = View.INVISIBLE
+                    } else {
+                        error.visibility = View.INVISIBLE
+                        val songs = songsTogether.split(" / ")
+                        var adapter = MusicAdapter(this@MainActivity, songs)
+                        recyclerView.adapter = adapter
+                        recyclerView.layoutManager = LinearLayoutManager(this@MainActivity)
+                        recyclerView.visibility = View.VISIBLE
+                    }
+                    progress.visibility = View.INVISIBLE
+                }
+            }
+        }.start()
     }
 
     fun getSearchResults() {
-        val python = Python.getInstance()
-        val pythonFile = python.getModule("ytbe")
         val searchText :EditText = this.findViewById(R.id.searchText)
         if (searchText.text.toString().isBlank()) {
             return
         }
-        val res = pythonFile.callAttr("get_songs", searchText.text.toString()).toString()
+        val progress = this.findViewById<ProgressBar>(R.id.progressBar)
+        progress.visibility = View.VISIBLE
+        this.findViewById<ImageView>(R.id.albumMainView).visibility = View.INVISIBLE
         val error = this.findViewById<TextView>(R.id.errorView)
-        if (res.isBlank()) {
-            error.text = "No Search Results"
-            error.visibility = View.VISIBLE
-            return
-        }
         error.visibility = View.INVISIBLE
-        val songs = res.split(" / ")
-        val adapter = MusicAdapter(this, songs)
         val recyclerView : RecyclerView = this.findViewById(R.id.musicView)
-        recyclerView.adapter = adapter
-        recyclerView.layoutManager = LinearLayoutManager(this)
+        recyclerView.visibility = View.INVISIBLE
+        object : Thread() {
+            override fun run() {
+                val python = Python.getInstance()
+                val pythonFile = python.getModule("ytbe")
+                val res = pythonFile.callAttr("get_songs", searchText.text.toString()).toString()
+                runOnUiThread {
+                    progress.visibility = View.INVISIBLE
+                    if (res.isBlank()) {
+                        error.text = "No Search Results"
+                        error.visibility = View.VISIBLE
+                        recyclerView.visibility = View.INVISIBLE
+                    } else {
+                        error.visibility = View.INVISIBLE
+                        val songs = res.split(" / ")
+                        val adapter = MusicAdapter(this@MainActivity, songs)
+                        recyclerView.adapter = adapter
+                        recyclerView.layoutManager = LinearLayoutManager(this@MainActivity)
+                        recyclerView.visibility = View.VISIBLE
+                    }
+                    progress.visibility = View.INVISIBLE
+                }
+            }
+        }.start()
     }
 
     fun getWeather(lat: Double, lon: Double) {
-        val python = Python.getInstance()
-        val pythonFile = python.getModule("main")
-        val weather = pythonFile.callAttr("get_weather", lat, lon).toString().split(" / ")
-        tempView.text = weather[1]
-        this.findViewById<TextView>(R.id.zoneView).text = weather[0].split("/")[1]
-        weatherView.text = weather[2]
-        humidView.text = "Humidity: " + weather[3]
-        windView.text = "Wind Speed: " + weather[4]
-        if (firstMove) {
-            weatherUpdate = "The current weather in your area is ${weather[2]} with a temperature of ${weather[1]} degree celsius, " +
-                    "humidity of ${weather[3]} percentage and wind speed of ${weather[4]} kilometer per hour."
-        }
+//        val python = Python.getInstance()
+//        val pythonFile = python.getModule("main")
+//        val weather = pythonFile.callAttr("get_weather", lat, lon).toString().split(" / ")
+//        tempView.text = weather[1]
+//        this.findViewById<TextView>(R.id.zoneView).text = weather[0].split("/")[1]
+//        weatherView.text = weather[2]
+//        humidView.text = "Humidity: " + weather[3]
+//        windView.text = "Wind Speed: " + weather[4]
+//        iconMap[weather[5]]?.let { this.findViewById<ImageView>(R.id.iconView).setImageResource(it) }
     }
 
     private fun GoogleMapInit(savedInstanceState: Bundle?) {
@@ -378,13 +480,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         }
         gMap  = map
         map.isMyLocationEnabled = true
-        if (pos != null) {
-            map.moveCamera(
-                CameraUpdateFactory.newLatLngZoom(
-                    LatLng(pos!!.latitude, pos!!.longitude),
-                15F
-            ))
-        }
         gMap.mapType = 1
         gMap.setOnMyLocationClickListener {
             focusMyLocation = true
@@ -399,6 +494,8 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
             return@setOnMyLocationButtonClickListener focusMyLocation
         }
 
+        gMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, R.raw.map_styles))
+
         gMap.isTrafficEnabled = true
         gMap.isBuildingsEnabled = true
         var speedView :TextView = this.findViewById(R.id.speedView)
@@ -409,29 +506,8 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                         sleep(250)
                         runOnUiThread {
                             if (gMap.myLocation != null && focusMyLocation) {
-                                var cameraPosition: CameraPosition = CameraPosition.Builder()
-                                    .target(
-                                        LatLng(
-                                            gMap.myLocation.latitude,
-                                            gMap.myLocation.longitude
-                                        )
-                                    )
-                                    .tilt(60f).zoom(20f).bearing(gMap.myLocation.bearing).build()
+                                setUserLocationMarker(gMap.myLocation)
                                 getWeather(gMap.myLocation.latitude, gMap.myLocation.longitude)
-                                if (firstMove) {
-                                    gMap.moveCamera(
-                                        CameraUpdateFactory.newCameraPosition(
-                                            cameraPosition
-                                        )
-                                    );
-                                    firstMove = false
-                                } else {
-                                    gMap.animateCamera(
-                                        CameraUpdateFactory.newCameraPosition(
-                                            cameraPosition
-                                        ), 200, null
-                                    );
-                                }
                             }
                             if (prevLoc != null && gMap.myLocation != null) {
                                 var value =  (gMap.myLocation.speed * 18/5)
@@ -441,14 +517,14 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                                     stillCount = 0
                                 }
                                 if (stillCount >= 8) {
-                                    val newValue = String.format("%.2f  Km/hr", speedView.text.split(" ")[0].toFloat() - 5)
+                                    val newValue = String.format("%.2f", speedView.text.split(" ")[0].toFloat() - 5)
                                     if (newValue.contains("-")) {
-                                        speedView.text = "0.00  Km/hr"
+                                        speedView.text = "0.00"
                                     } else {
                                         speedView.text = newValue
                                     }
                                 } else {
-                                    speedView.text = String.format("%.2f  Km/hr", value)
+                                    speedView.text = String.format("%.2f", value)
                                 }
                             }
                             prevLoc = gMap.myLocation
@@ -458,10 +534,31 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                 }
             }
         }
-        mapThread.start()
+        (mapThread as Thread).start()
     }
 
     override fun onBackPressed() {
 
+    }
+
+    var userLocationMarker: Marker? = null
+
+    private fun setUserLocationMarker(location: Location) {
+        val latLng = LatLng(location.latitude, location.longitude)
+        if (userLocationMarker == null) {
+            //Create a new marker
+            val markerOptions = MarkerOptions()
+            markerOptions.position(latLng)
+            markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.car))
+            markerOptions.rotation(location.bearing)
+            markerOptions.anchor(0.5.toFloat(), 0.5.toFloat())
+            userLocationMarker = gMap.addMarker(markerOptions)
+            gMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 19f))
+        } else {
+            //use the previously created marker
+            userLocationMarker!!.setPosition(latLng)
+            userLocationMarker!!.setRotation(location.bearing)
+            gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 19f))
+        }
     }
 }

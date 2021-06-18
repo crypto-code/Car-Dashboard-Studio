@@ -59,7 +59,7 @@ class AddUserActivity : AppCompatActivity() {
                             handler.post {
                                 val intent =
                                     Intent(this@AddUserActivity, UsersActivity::class.java)
-                                intent.flags = Intent.FLAG_ACTIVITY_NO_HISTORY;
+
                                 releaseCamera()
                                 startActivity(intent)
                             }
@@ -106,7 +106,7 @@ class AddUserActivity : AppCompatActivity() {
             handler.post {
                 val intent =
                     Intent(this@AddUserActivity, UsersActivity::class.java)
-                intent.flags = Intent.FLAG_ACTIVITY_NO_HISTORY;
+
                 releaseCamera()
                 startActivity(intent)
             }
@@ -140,7 +140,7 @@ class AddUserActivity : AppCompatActivity() {
                         handler.post {
                             val intent =
                                 Intent(this@AddUserActivity, UsersActivity::class.java)
-                            intent.flags = Intent.FLAG_ACTIVITY_NO_HISTORY;
+
                             releaseCamera()
                             startActivity(intent)
                         }

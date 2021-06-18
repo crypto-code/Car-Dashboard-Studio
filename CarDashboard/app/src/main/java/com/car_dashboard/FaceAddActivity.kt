@@ -61,8 +61,10 @@ class FaceAddActivity : AppCompatActivity() {
                                 handler.post {
                                     val intent =
                                         Intent(this@FaceAddActivity, LoginActivity::class.java)
-                                    intent.flags = Intent.FLAG_ACTIVITY_NO_HISTORY;
+
                                     releaseCamera()
+                                    t2s.stop()
+                                    t2s.shutdown()
                                     startActivity(intent)
                                 }
                             } else {
@@ -122,8 +124,10 @@ class FaceAddActivity : AppCompatActivity() {
             handler.post {
                 val intent =
                     Intent(this@FaceAddActivity, LoginActivity::class.java)
-                intent.flags = Intent.FLAG_ACTIVITY_NO_HISTORY;
+
                 releaseCamera()
+                t2s.stop()
+                t2s.shutdown()
                 startActivity(intent)
             }
         }

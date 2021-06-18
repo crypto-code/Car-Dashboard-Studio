@@ -20,7 +20,7 @@ class UsersActivity : AppCompatActivity() {
             val handler = Handler()
             handler.post {
                 val intent = Intent(this, AddUserActivity::class.java)
-                intent.flags = Intent.FLAG_ACTIVITY_NO_HISTORY;
+
                 startActivity(intent)
             }
         }
@@ -37,12 +37,4 @@ class UsersActivity : AppCompatActivity() {
         recyclerView.layoutManager = LinearLayoutManager(this)
     }
 
-    override fun onBackPressed() {
-        val handler = Handler()
-        handler.post {
-            val intent = Intent(this, MainActivity::class.java)
-            intent.flags = Intent.FLAG_ACTIVITY_NO_HISTORY;
-            startActivity(intent)
-        }
-    }
 }

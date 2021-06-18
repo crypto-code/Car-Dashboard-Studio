@@ -4,10 +4,12 @@ import android.app.Activity
 import android.content.Context
 import android.media.AudioManager
 import android.media.MediaPlayer
+import android.service.voice.VoiceInteractionService
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.SeekBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.cardview.widget.CardView
@@ -39,6 +41,7 @@ class MusicAdapter(ct : Context, songs : List<String>) : RecyclerView.Adapter<Mu
         var likeBtn :ImageView = itemView.findViewById(R.id.likeBtn)
         var card :ConstraintLayout = itemView.findViewById(R.id.card)
         lateinit var musicURL:String;
+        lateinit var musicArtUrl :String;
         var context :Context = ct
         lateinit var songID :String;
         var isFav :Boolean = false;
@@ -64,6 +67,8 @@ class MusicAdapter(ct : Context, songs : List<String>) : RecyclerView.Adapter<Mu
                     (context as Activity).findViewById<TextView>(R.id.musicTrackEnd).text = musicDuration.text
                     it.start()
                 }
+                DownloadImageTask((context as Activity).findViewById(R.id.albumMainView)).execute(musicArtUrl)
+                (context as Activity).findViewById<RecyclerView>(R.id.musicView).visibility = View.INVISIBLE
             } catch (e: IOException) {
                 e.printStackTrace()
             }
@@ -122,6 +127,7 @@ class MusicAdapter(ct : Context, songs : List<String>) : RecyclerView.Adapter<Mu
         DownloadImageTask(holder.albumArt).execute(songList[position]["thumbnail"] as String)
         holder.musicURL = songList[position]["url"] as String
         holder.songID = songList[position]["id"] as String
+        holder.musicArtUrl = "https://i.ytimg.com/vi/" + holder.songID + "/hqdefault.jpg"
         val python = Python.getInstance()
         val pythonFile = python.getModule("music")
         holder.isFav = pythonFile.callAttr("is_favorite", Values.myID, Values.myName, holder.songID).toBoolean()

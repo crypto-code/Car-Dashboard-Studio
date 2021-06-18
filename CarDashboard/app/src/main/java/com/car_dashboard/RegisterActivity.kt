@@ -4,20 +4,30 @@ import android.Manifest
 import android.content.ContentValues
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.graphics.Canvas
+import android.graphics.PixelFormat
+import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.Drawable
 import android.hardware.Camera
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.speech.tts.TextToSpeech
 import android.util.Log
 import android.view.View
 import android.widget.*
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.drawable.toBitmap
+import androidx.core.graphics.drawable.toDrawable
 import com.chaquo.python.Python
+import java.io.ByteArrayOutputStream
 import java.io.FileNotFoundException
 import java.io.IOException
 import java.util.*
+
 
 class RegisterActivity : AppCompatActivity() {
 
@@ -25,6 +35,22 @@ class RegisterActivity : AppCompatActivity() {
     private var mPreview: CameraPreview? = null
     private var cameraId = 0
     lateinit var t2s : TextToSpeech
+
+    fun drawable2Bytes(): ByteArray? {
+        val bitmap = drawable2Bitmap()
+        return bitmap2Bytes(bitmap)
+    }
+
+    fun drawable2Bitmap(): Bitmap {
+        val bitmap = BitmapFactory.decodeResource(resources, R.drawable.profile)
+        return bitmap
+    }
+
+    fun bitmap2Bytes(bm: Bitmap): ByteArray? {
+        val baos = ByteArrayOutputStream()
+        bm.compress(Bitmap.CompressFormat.PNG, 100, baos)
+        return baos.toByteArray()
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,11 +69,13 @@ class RegisterActivity : AppCompatActivity() {
                 try {
                     val python = Python.getInstance()
                     val pythonFile = python.getModule("main")
-                    val storeFace = pythonFile.callAttr("store_face", Values.myID, Values.myName, Values.myPIN, data, "True")
+                    val storeFace = pythonFile.callAttr("store_face", Values.myID, Values.myName, Values.myPIN, data, "True", drawable2Bytes())
                     if (storeFace.toBoolean()) {
                         handler.post {
                             val intent = Intent(this@RegisterActivity, LoginActivity::class.java)
-                            intent.flags = Intent.FLAG_ACTIVITY_NO_HISTORY;
+                            t2s.stop()
+                            t2s.shutdown()
+
                             releaseCamera()
                             startActivity(intent)
                         }
@@ -99,12 +127,12 @@ class RegisterActivity : AppCompatActivity() {
     private fun skipFace() {
         val python = Python.getInstance()
         val pythonFile = python.getModule("main")
-        val storeFace = pythonFile.callAttr("store_without_face", Values.myID, Values.myName, Values.myPIN, "True")
+        val storeFace = pythonFile.callAttr("store_without_face", Values.myID, Values.myName, Values.myPIN, "True", drawable2Bytes())
         val handler = Handler()
         if (storeFace.toBoolean()) {
             handler.post {
                 val intent = Intent(this@RegisterActivity, LoginActivity::class.java)
-                intent.flags = Intent.FLAG_ACTIVITY_NO_HISTORY;
+
                 releaseCamera()
                 startActivity(intent)
             }
@@ -185,7 +213,7 @@ class RegisterActivity : AppCompatActivity() {
             val handler = Handler()
             handler.post {
                 val intent = Intent(this, SignUpActivity::class.java)
-                intent.flags = Intent.FLAG_ACTIVITY_NO_HISTORY;
+
                 startActivity(intent)
             }
         }

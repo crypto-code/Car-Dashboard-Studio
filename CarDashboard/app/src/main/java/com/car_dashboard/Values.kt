@@ -2,6 +2,8 @@ package com.car_dashboard
 
 import android.media.AudioManager
 import android.media.MediaPlayer
+import android.speech.tts.TextToSpeech
+import com.google.android.gms.maps.model.LatLng
 
 object Values {
 
@@ -14,4 +16,8 @@ object Values {
 
     var newName: String? = ""
     var newPIN: String? = ""
+
+    var myDest : LatLng? = null
+
+    lateinit var t2s : TextToSpeech
 }

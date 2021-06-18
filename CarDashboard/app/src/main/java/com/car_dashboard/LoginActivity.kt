@@ -56,8 +56,9 @@ class LoginActivity : AppCompatActivity() {
                             Values.myName = checkFace.toString()
                             handler.post {
                                 val intent = Intent(this@LoginActivity, MainActivity::class.java)
-                                intent.flags = Intent.FLAG_ACTIVITY_NO_HISTORY;
                                 releaseCamera()
+                                t2s.stop()
+                                t2s.shutdown()
                                 startActivity(intent)
                             }
                         } else {
@@ -97,8 +98,12 @@ class LoginActivity : AppCompatActivity() {
                 val handler = Handler()
                 handler.post {
                     val intent = Intent(this@LoginActivity, FaceAddActivity::class.java)
-                    intent.flags = Intent.FLAG_ACTIVITY_NO_HISTORY;
+                    intent.setAction(Intent.ACTION_VIEW);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                     releaseCamera()
+                    t2s.stop()
+                    t2s.shutdown()
                     startActivity(intent)
                 }
             }
@@ -107,8 +112,12 @@ class LoginActivity : AppCompatActivity() {
             val handler = Handler()
             handler.post {
                 val intent = Intent(this@LoginActivity, PinActivity::class.java)
-                intent.flags = Intent.FLAG_ACTIVITY_NO_HISTORY;
+                intent.setAction(Intent.ACTION_VIEW);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 releaseCamera()
+                t2s.stop()
+                t2s.shutdown()
                 startActivity(intent)
             }
         }

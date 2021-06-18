@@ -1,10 +1,14 @@
 package com.car_dashboard
 
+import android.animation.AnimatorListenerAdapter
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.opengl.Visibility
 import android.os.AsyncTask
 import android.util.Log
+import android.view.View
 import android.widget.ImageView
+import android.widget.ViewAnimator
 import java.io.InputStream
 import java.net.URL
 
@@ -21,13 +25,14 @@ class DownloadImageTask(bmImage: ImageView) :
             mIcon11 = BitmapFactory.decodeStream(`in`)
         } catch (e: Exception) {
             e.message?.let { Log.e("Error", it) }
-            e.printStackTrace()
+            bmImage.setImageResource(R.drawable.music)
         }
         return mIcon11
     }
 
     override fun onPostExecute(result: Bitmap?) {
         bmImage.setImageBitmap(result)
+        bmImage.visibility = View.VISIBLE
     }
 
 }
