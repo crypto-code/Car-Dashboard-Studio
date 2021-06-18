@@ -33,6 +33,8 @@ def remove_favorites(id, name, song):
     return False
 
 def get_favorite_songs(id, name):
+  if not has_favorites(id, name):
+    return ""
   vals = get_favorites(id, name)
   songs = []
   for v in vals:

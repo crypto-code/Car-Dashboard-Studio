@@ -59,6 +59,10 @@ def get_url(songID):
   video = pafy.new("https://youtube.com/watch?v="+songID)
   return video.getbest().url
 
+def get_art(songID):
+  video = pafy.new("https://youtube.com/watch?v="+songID)
+  return video.bigthumb
+
 def get_song(songID):
   details = ytmusic.get_song(songID)['videoDetails']
   return {"title": details["title"], "id": songID, "url":get_url(songID),
