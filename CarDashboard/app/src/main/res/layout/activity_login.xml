@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/back2"
+    android:background="#121212"
     tools:context=".LoginActivity">
 
     <FrameLayout
@@ -29,7 +29,7 @@
         android:layout_width="250dp"
         android:layout_height="60dp"
         android:layout_marginBottom="96dp"
-        android:background="@drawable/button"
+        android:background="@drawable/rounded_rectangle"
         android:fontFamily="@font/amiko"
         android:text="Start Engine"
         android:textColor="#FFFFFF"
@@ -106,5 +106,15 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView10" />
+
+    <ImageView
+        android:layout_width="240dp"
+        android:layout_height="60dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginBottom="10dp"
+        android:scaleType="fitXY"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:srcCompat="@drawable/sublogo_white" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
