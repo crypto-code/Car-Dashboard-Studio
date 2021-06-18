@@ -27,7 +27,6 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapView
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.model.*
-import com.squareup.picasso.Picasso
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -95,7 +94,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         val python = Python.getInstance()
         val pythonFile = python.getModule("user")
         val adminStatus = pythonFile.callAttr("get_admin_status", Values.myID, Values.myName)
-        Picasso.get().setLoggingEnabled(true)
         if (adminStatus.toString() == "False") {
             this.findViewById<Button>(R.id.usersBtn).visibility = View.INVISIBLE
         } else {
