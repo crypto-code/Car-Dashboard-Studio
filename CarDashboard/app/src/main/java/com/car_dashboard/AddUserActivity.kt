@@ -103,7 +103,6 @@ class AddUserActivity : AppCompatActivity() {
             handler.post {
                 val intent =
                     Intent(this@AddUserActivity, UsersActivity::class.java)
-
                 releaseCamera()
                 startActivity(intent)
             }

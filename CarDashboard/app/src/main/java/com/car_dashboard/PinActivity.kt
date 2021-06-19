@@ -25,6 +25,8 @@ class PinActivity : AppCompatActivity() {
         findViewById<Button>(R.id.button21).setOnClickListener{
             handler.post {
                 val intent = Intent(this@PinActivity, LoginActivity::class.java)
+                t2s.stop()
+                t2s.shutdown()
                 startActivity(intent)
             }
         }

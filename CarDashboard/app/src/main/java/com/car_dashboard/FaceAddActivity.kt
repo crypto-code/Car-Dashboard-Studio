@@ -61,7 +61,6 @@ class FaceAddActivity : AppCompatActivity() {
                                 handler.post {
                                     val intent =
                                         Intent(this@FaceAddActivity, LoginActivity::class.java)
-
                                     releaseCamera()
                                     t2s.stop()
                                     t2s.shutdown()

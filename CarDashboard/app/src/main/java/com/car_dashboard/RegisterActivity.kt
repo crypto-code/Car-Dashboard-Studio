@@ -65,17 +65,24 @@ class RegisterActivity : AppCompatActivity() {
 
         val handler = Handler()
         val mPicture = Camera.PictureCallback { data, _ ->
-            Thread(Runnable {
+            Thread {
                 try {
                     val python = Python.getInstance()
                     val pythonFile = python.getModule("main")
-                    val storeFace = pythonFile.callAttr("store_face", Values.myID, Values.myName, Values.myPIN, data, "True", drawable2Bytes())
+                    val storeFace = pythonFile.callAttr(
+                        "store_face",
+                        Values.myID,
+                        Values.myName,
+                        Values.myPIN,
+                        data,
+                        "True",
+                        drawable2Bytes()
+                    )
                     if (storeFace.toBoolean()) {
                         handler.post {
                             val intent = Intent(this@RegisterActivity, LoginActivity::class.java)
                             t2s.stop()
                             t2s.shutdown()
-
                             releaseCamera()
                             startActivity(intent)
                         }
@@ -86,7 +93,11 @@ class RegisterActivity : AppCompatActivity() {
                             progressBar2.visibility = View.INVISIBLE
                             camera_preview2.visibility = View.VISIBLE
                             button4.visibility = View.VISIBLE
-                            Toast.makeText(this,"Make sure exactly one face is visible", Toast.LENGTH_LONG).show()
+                            Toast.makeText(
+                                this,
+                                "Make sure exactly one face is visible",
+                                Toast.LENGTH_LONG
+                            ).show()
                         }
                     }
                 } catch (e: FileNotFoundException) {
@@ -94,7 +105,7 @@ class RegisterActivity : AppCompatActivity() {
                 } catch (e: IOException) {
                     Log.d(ContentValues.TAG, "Error accessing file: ${e.message}")
                 }
-            }).start()
+            }.start()
         }
 
         val captureButton: Button = findViewById(R.id.button4)
@@ -132,7 +143,8 @@ class RegisterActivity : AppCompatActivity() {
         if (storeFace.toBoolean()) {
             handler.post {
                 val intent = Intent(this@RegisterActivity, LoginActivity::class.java)
-
+                t2s.stop()
+                t2s.shutdown()
                 releaseCamera()
                 startActivity(intent)
             }
@@ -213,7 +225,8 @@ class RegisterActivity : AppCompatActivity() {
             val handler = Handler()
             handler.post {
                 val intent = Intent(this, SignUpActivity::class.java)
-
+                t2s.stop()
+                t2s.shutdown()
                 startActivity(intent)
             }
         }
