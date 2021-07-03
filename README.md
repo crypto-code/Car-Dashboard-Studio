@@ -24,6 +24,8 @@ This project was completed in collaboration with the Center of Excellence Artifi
 ![](https://github.com/crypto-code/Car-Dashboard-Studio/blob/main/assets/4.png)
 ---  
 ![](https://github.com/crypto-code/Car-Dashboard-Studio/blob/main/assets/5.png)
+---
+![](https://github.com/crypto-code/Car-Dashboard-Studio/blob/main/assets/13.png)
 
 
 ## User Flow Diagram
@@ -60,6 +62,8 @@ This project was completed in collaboration with the Center of Excellence Artifi
     <p align="center">
     <img src="https://github.com/crypto-code/Car-Dashboard-Studio/blob/main/assets/12.png" height="400">
     </p>
+ - ***Photon OpenStreetMaps API***
+    This is used to get the search results for places in navigation.
 
 ## Future Prospects
 
