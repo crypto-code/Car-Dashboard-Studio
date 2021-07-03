@@ -1,12 +1,14 @@
 package com.car_dashboard
 
 import android.Manifest
+import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.provider.Settings
+import android.view.View
 import android.view.Window
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
@@ -17,6 +19,8 @@ class WelcomeActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_welcome)
+        window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_FULLSCREEN
+        actionBar?.hide()
     }
 
     override fun onBackPressed() {
@@ -26,7 +30,6 @@ class WelcomeActivity : AppCompatActivity() {
     override fun onEnterAnimationComplete() {
         super.onEnterAnimationComplete()
         val delayMillis = 3000L
-
         val androidID: String? = Settings.Secure.getString(baseContext.contentResolver, Settings.Secure.ANDROID_ID)
         Values.myID = androidID
 
@@ -71,8 +74,6 @@ class WelcomeActivity : AppCompatActivity() {
                 arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION), 1);
         }
 
-
-
         val python = Python.getInstance()
         val pythonFile = python.getModule("main")
         val checkDevice = pythonFile.callAttr("check_device", androidID)
@@ -97,5 +98,11 @@ class WelcomeActivity : AppCompatActivity() {
                 startActivity(intent)
             }, delayMillis)
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_FULLSCREEN
+        actionBar?.hide()
     }
 }

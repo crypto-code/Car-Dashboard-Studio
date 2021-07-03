@@ -2,6 +2,7 @@ package com.car_dashboard
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
 import android.content.DialogInterface
@@ -63,6 +64,9 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_FULLSCREEN
+        actionBar?.hide()
+
 
         tempView = this.findViewById(R.id.tempView)
         weatherView = this.findViewById(R.id.weatherView)
@@ -94,11 +98,13 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         val python = Python.getInstance()
         val pythonFile = python.getModule("user")
         val adminStatus = pythonFile.callAttr("get_admin_status", Values.myID, Values.myName)
+        val usersBtn = this.findViewById<Button>(R.id.usersBtn)
         if (adminStatus.toString() == "False") {
-            this.findViewById<Button>(R.id.usersBtn).visibility = View.INVISIBLE
+            usersBtn.isEnabled = false
+            usersBtn.alpha = 0.5F
         } else {
-            this.findViewById<Button>(R.id.usersBtn).visibility = View.VISIBLE
-            this.findViewById<Button>(R.id.usersBtn).setOnClickListener {
+            usersBtn.visibility = View.VISIBLE
+            usersBtn.setOnClickListener {
                 val handler: Handler = Handler()
                 handler.post {
                     val intent = Intent(this@MainActivity, UsersActivity::class.java)
@@ -162,7 +168,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
             recyclerView.visibility = View.VISIBLE
             true
         }
-        val albumMain :ImageView = this.findViewById<ImageView>(R.id.albumMainView)
+        val albumMain :ImageView = this.findViewById(R.id.albumMainView)
         this.findViewById<TextView>(R.id.musicInfo).setOnClickListener {
             albumMain.visibility = View.VISIBLE
             recyclerView.visibility = View.INVISIBLE
@@ -282,6 +288,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         getFavorites()
 
         this.findViewById<Button>(R.id.favBtn).setOnClickListener {
+            this.findViewById<TextView>(R.id.searchText).text = ""
             getFavorites()
         }
 
@@ -433,6 +440,8 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
     override fun onResume() {
         super.onResume()
+        window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_FULLSCREEN
+        actionBar?.hide()
         object : Thread() {
             override fun run() {
                 val python = Python.getInstance()

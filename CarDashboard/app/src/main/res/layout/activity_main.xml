@@ -51,7 +51,7 @@
                 android:fontFamily="@font/amiko"
                 android:text="00:00 AM"
                 android:textColor="#FFFFFF"
-                android:textSize="25sp" />
+                android:textSize="20sp" />
 
             <Space
                 android:layout_width="match_parent"
@@ -64,7 +64,7 @@
                 android:layout_height="wrap_content"
                 android:text="19 May 2021"
                 android:textColor="#FFFFFF"
-                android:textSize="25sp" />
+                android:textSize="20sp" />
         </LinearLayout>
 
         <TextView
@@ -74,7 +74,7 @@
             android:layout_marginEnd="15dp"
             android:text="👋 Welcome, Atin"
             android:textColor="#FFFFFF"
-            android:textSize="28sp"
+            android:textSize="25sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/profileView"
             app:layout_constraintTop_toTopOf="parent"
@@ -86,14 +86,14 @@
             android:gravity="center"
             android:orientation="horizontal"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/linearLayout7"
+            app:layout_constraintEnd_toStartOf="@+id/nameView"
+            app:layout_constraintStart_toEndOf="@+id/linearLayout7"
             app:layout_constraintTop_toTopOf="parent">
 
             <ImageView
                 android:id="@+id/imageView5"
-                android:layout_width="240dp"
-                android:layout_height="60dp"
+                android:layout_width="200dp"
+                android:layout_height="40dp"
                 android:scaleType="fitXY"
                 app:srcCompat="@drawable/sublogo_white" />
 
@@ -104,13 +104,13 @@
                 android:layout_marginStart="32dp"
                 android:text="|   DAA Self-Driving Car"
                 android:textColor="#FFFFFF"
-                android:textSize="30sp" />
+                android:textSize="25sp" />
         </LinearLayout>
 
         <ImageView
             android:id="@+id/profileView"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:scaleType="fitXY"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -249,8 +249,8 @@
 
                 <ImageView
                     android:id="@+id/prevBtn"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
                     android:layout_weight="0"
                     app:srcCompat="@drawable/prev" />
 
@@ -261,8 +261,8 @@
 
                 <ImageView
                     android:id="@+id/playBtn"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
                     android:layout_weight="0"
                     app:srcCompat="@drawable/play" />
 
@@ -273,8 +273,8 @@
 
                 <ImageView
                     android:id="@+id/nextBtn"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
                     android:layout_weight="0"
                     app:srcCompat="@drawable/next" />
 
@@ -397,7 +397,7 @@
         android:layout_width="250dp"
         android:layout_height="60dp"
         android:background="@drawable/rounded_rectangle"
-        android:text="Manage Users 🦸 "
+        android:text="Manage Users 👦"
         android:textColor="#FFFFFF"
         android:textSize="24sp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -413,16 +413,15 @@
         android:text="Log Out  ❌"
         android:textColor="#FFFFFF"
         android:textSize="24sp"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/linearLayout9"
         app:layout_constraintStart_toEndOf="@+id/map"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout6" />
+        app:layout_constraintTop_toTopOf="@+id/dirBtn" />
 
     <LinearLayout
         android:id="@+id/linearLayout6"
-        android:layout_width="150dp"
-        android:layout_height="150dp"
-        android:layout_marginBottom="100dp"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:layout_marginBottom="120dp"
         android:background="@drawable/circle"
         android:gravity="center"
         android:orientation="vertical"
@@ -439,7 +438,7 @@
             android:gravity="center"
             android:text="00.00"
             android:textColor="#FFFFFF"
-            android:textSize="35sp"
+            android:textSize="25sp"
             app:layout_constraintBottom_toTopOf="@+id/usersBtn"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -457,11 +456,11 @@
 
     <ImageView
         android:id="@+id/imageView4"
-        android:layout_width="250dp"
-        android:layout_height="200dp"
-        android:layout_marginTop="50dp"
+        android:layout_width="150dp"
+        android:layout_height="130dp"
         android:scaleType="fitXY"
         android:visibility="visible"
+        app:layout_constraintBottom_toTopOf="@+id/textView18"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.507"
         app:layout_constraintStart_toStartOf="parent"
@@ -471,23 +470,23 @@
     <TextView
         android:id="@+id/textView18"
         android:layout_width="wrap_content"
-        android:layout_height="60dp"
+        android:layout_height="40dp"
+        android:layout_marginBottom="30dp"
         android:background="@drawable/rounded_rectangle"
         android:gravity="center"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
         android:text="Car Status: Unlocked 🔓"
         android:textColor="#FFFFFF"
-        android:textSize="24sp"
+        android:textSize="22sp"
         app:layout_constraintBottom_toTopOf="@+id/linearLayout6"
         app:layout_constraintEnd_toStartOf="@+id/linearLayout9"
-        app:layout_constraintStart_toEndOf="@+id/map"
-        app:layout_constraintTop_toBottomOf="@+id/imageView4" />
+        app:layout_constraintStart_toEndOf="@+id/map" />
 
     <LinearLayout
         android:id="@+id/linearLayout8"
         android:layout_width="360dp"
-        android:layout_height="150dp"
+        android:layout_height="120dp"
         android:layout_marginTop="60dp"
         android:background="@drawable/rounded_rectangle"
         android:gravity="center"
@@ -500,8 +499,8 @@
 
         <ImageView
             android:id="@+id/iconView"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             android:layout_weight="0"
             android:scaleType="fitXY"
             app:srcCompat="@drawable/back" />
@@ -517,7 +516,7 @@
             android:layout_weight="0"
             android:text="__.__"
             android:textColor="#FFFFFF"
-            android:textSize="36sp" />
+            android:textSize="32sp" />
 
         <TextView
             android:id="@+id/textView21"
@@ -526,7 +525,7 @@
             android:layout_weight="0"
             android:text="°C"
             android:textColor="#FFFFFF"
-            android:textSize="36sp" />
+            android:textSize="32sp" />
 
         <Space
             android:layout_width="10dp"

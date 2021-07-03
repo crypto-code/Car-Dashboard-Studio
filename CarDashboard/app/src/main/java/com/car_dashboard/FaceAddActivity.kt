@@ -1,6 +1,7 @@
 package com.car_dashboard
 
 import android.Manifest
+import android.app.Activity
 import android.content.ContentValues
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -29,6 +30,9 @@ class FaceAddActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_face_add)
+
+        window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_FULLSCREEN
+        actionBar?.hide()
 
         startCamera()
 
@@ -214,6 +218,8 @@ class FaceAddActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
+        window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_FULLSCREEN
+        actionBar?.hide()
         startCamera()
     }
 

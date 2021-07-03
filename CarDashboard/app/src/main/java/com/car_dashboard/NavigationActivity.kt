@@ -1,6 +1,7 @@
 package com.car_dashboard
 
 import android.Manifest
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -38,6 +39,9 @@ class NavigationActivity : AppCompatActivity(), OnMapReadyCallback {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_navigation)
 
+        window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_FULLSCREEN
+        actionBar?.hide()
+
         this.findViewById<Button>(R.id.searchPlaceBtn).setOnClickListener {
             val inputManager: InputMethodManager =
                 getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
@@ -52,6 +56,7 @@ class NavigationActivity : AppCompatActivity(), OnMapReadyCallback {
         GoogleMapInit(savedInstanceState)
 
         this.findViewById<Button>(R.id.favPlaceBtn).setOnClickListener {
+            this.findViewById<TextView>(R.id.mapPlaces).text = ""
             getFavorites()
         }
 
@@ -212,6 +217,8 @@ class NavigationActivity : AppCompatActivity(), OnMapReadyCallback {
 
     override fun onResume() {
         super.onResume()
+        window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_FULLSCREEN
+        actionBar?.hide()
         mMap.onResume()
     }
 

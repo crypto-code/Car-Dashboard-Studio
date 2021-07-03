@@ -1,9 +1,12 @@
 package com.car_dashboard
 
 import android.Manifest
+import android.app.Activity
 import android.content.ContentValues
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.hardware.Camera
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -15,6 +18,7 @@ import android.widget.*
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.chaquo.python.Python
+import java.io.ByteArrayOutputStream
 import java.io.FileNotFoundException
 import java.io.IOException
 import java.util.*
@@ -26,9 +30,28 @@ class AddUserActivity : AppCompatActivity() {
     private var cameraId = 0
     lateinit var t2s : TextToSpeech
 
+    fun drawable2Bytes(): ByteArray? {
+        val bitmap = drawable2Bitmap()
+        return bitmap2Bytes(bitmap)
+    }
+
+    fun drawable2Bitmap(): Bitmap {
+        val bitmap = BitmapFactory.decodeResource(resources, R.drawable.profile)
+        return bitmap
+    }
+
+    fun bitmap2Bytes(bm: Bitmap): ByteArray? {
+        val baos = ByteArrayOutputStream()
+        bm.compress(Bitmap.CompressFormat.PNG, 100, baos)
+        return baos.toByteArray()
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_user)
+
+        window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_FULLSCREEN
+        actionBar?.hide()
 
         startCamera()
 
@@ -53,7 +76,8 @@ class AddUserActivity : AppCompatActivity() {
                             Values.newName,
                             Values.newPIN,
                             data,
-                            "False"
+                            "False",
+                            drawable2Bytes()
                         )
                         if (storeFace.toBoolean()) {
                             handler.post {
@@ -130,15 +154,13 @@ class AddUserActivity : AppCompatActivity() {
                         Values.myID,
                         Values.newName,
                         Values.newPIN,
-                        "False"
+                        "False",
+                        drawable2Bytes()
                     )
                     if (storeUser.toBoolean()) {
                         handler.post {
-                            val intent =
-                                Intent(this@AddUserActivity, UsersActivity::class.java)
-
+                            this.onBackPressed()
                             releaseCamera()
-                            startActivity(intent)
                         }
                     } else {
                         Toast.makeText(
@@ -228,6 +250,8 @@ class AddUserActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
+        window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_FULLSCREEN
+        actionBar?.hide()
         startCamera()
     }
 

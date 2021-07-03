@@ -12,6 +12,9 @@ def remove_user(id, name):
   try:
     ref = db.reference("/" + id)
     ref.child(name).set({})
+    bucket = storage.bucket()
+    blob = bucket.blob(id + "/" + name + ".png")
+    blob.delete()
     return True
   except:
     return False
@@ -24,19 +27,27 @@ def get_admin_status(id, name):
   vals = ref.child(id).get()
   return vals[name]["is_admin"]
 
-def add_user_with_face(id, name, pin, img, is_admin):
+def add_user_with_face(id, name, pin, img, is_admin, profile):
   try:
     ref = db.reference("/" + id)
     enc = get_encoding_with_image(img)
+    bucket = storage.bucket()
+    image_data = io.BytesIO(profile).read()
+    blob = bucket.blob(id + "/" + name + ".png")
     ref.child(name).set({"PIN": pin, "Encoding": enc.tolist(), "is_admin": str(is_admin)})
+    blob.upload_from_string(image_data, content_type='image/png')
     return True
   except:
     return False
 
-def add_user_without_face(id, name, pin, is_admin):
+def add_user_without_face(id, name, pin, is_admin, profile):
   try:
     ref = db.reference("/" + id)
+    bucket = storage.bucket()
+    image_data = io.BytesIO(profile).read()
+    blob = bucket.blob(id + "/" + name + ".png")
     ref.child(name).set({"PIN": pin, "Encoding": "", "is_admin": str(is_admin)})
+    blob.upload_from_string(image_data, content_type='image/png')
     return True
   except:
     return False
