@@ -62,7 +62,7 @@ This project was completed in collaboration with the Center of Excellence Artifi
     <p align="center">
     <img src="https://github.com/crypto-code/Car-Dashboard-Studio/blob/main/assets/12.png" height="400">
     </p>
- - ***Photon OpenStreetMaps API***
+ - ***Photon OpenStreetMaps API***:
     This is used to get the search results for places in navigation.
 
 ## Future Prospects
